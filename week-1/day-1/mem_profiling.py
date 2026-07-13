@@ -134,9 +134,15 @@ end_snapshot = tracemalloc.take_snapshot()
 leaky_stats = end_snapshot.compare_to(start_snapshot, 'traceback')
 
 # Print the exact file and line number causing the biggest memory spike
+# leaky_stats is a sorted list. [0] extracts the single worst 'StatisticDiff' object.
 top_leak = leaky_stats[0]
+
 print(f"CRITICAL: Biggest memory consumer found!")
 print(f"Size: {top_leak.size / 1024:.2f} KB")
+
+# top_leak.traceback.format() turns the allocation call stack into a list of strings
+# ordered from oldest to newest. Using [-1] safely snipers the very last frame,
+# pointing directly to the exact line of code responsible for triggering the leak.
 print(f"Line Reference:\n{top_leak.traceback.format()[-1].strip()}")
 
 # Clear leak and stop tracking
