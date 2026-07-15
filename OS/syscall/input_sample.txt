@@ -1,0 +1,2 @@
+Systems Architecture Level-0: Raw Kernel Mode Intercept.
+If you can read this, your low-level buffer loop is functioning flawlessly!
