@@ -1,6 +1,5 @@
 // execution: 
-//     gcc ipc_pipe.c -o ipc_pipe
-//     ./ipc_pipe
+//     gcc ipc_pipe.c -o ipc_pipe && ./ipc_pipe
 
 #include <stdio.h>
 #include <stdlib.h>
