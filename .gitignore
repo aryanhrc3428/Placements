@@ -1,2 +1,9 @@
 documents/
 .git_push_shutdown.sh
+
+CSA/cs61c/lecture/intro.pdf
+CSA/cs61c/lecture/warehouse scale computing.pdf
+sockets/client.py
+sockets/server.py
+CSA/cs61c/projects/*
+CSA/cs61c/labs/*
