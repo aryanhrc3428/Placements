@@ -1,7 +1,13 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-vector<vector<int>> threeSum(vector<int>& nums) {}
+vector<vector<int>> threeSum(vector<int>& nums) {
+
+    for (int i = 0; i < nums.size() - 1; i++) {
+        unordered_map<int,int> hash;
+        
+    }
+}
 
 int main()
 {

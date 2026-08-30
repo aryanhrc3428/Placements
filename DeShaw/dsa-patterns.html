@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Pattern Field Guide — 28 Patterns / NeetCode 250</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1120;
+  --bg-2:#080D18;
+  --surface:#131B2E;
+  --surface-2:#0F1626;
+  --border:#232E47;
+  --border-soft:#1B2438;
+  --text:#E6EAF3;
+  --text-dim:#93A1C0;
+  --text-faint:#5C6989;
+  --accent:#5EEAD4;
+  --easy:#4ADE80;
+  --medium:#FBBF24;
+  --hard:#FB7185;
+  --radius:10px;
+
+  --c-arrays:#5EEAD4;
+  --c-twoptr:#60A5FA;
+  --c-window:#A78BFA;
+  --c-stack:#F472B6;
+  --c-bsearch:#FB923C;
+  --c-linked:#34D399;
+  --c-trees:#38BDF8;
+  --c-tries:#C084FC;
+  --c-heap:#FBBF24;
+  --c-backtrack:#F87171;
+  --c-graphs:#2DD4BF;
+  --c-advgraphs:#818CF8;
+  --c-dp1d:#FACC15;
+  --c-dp2d:#FB7185;
+  --c-greedy:#4ADE80;
+  --c-intervals:#22D3EE;
+  --c-bits:#E879F9;
+  --c-math:#A3E635;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  line-height:1.6;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(var(--border-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+  background-size:48px 48px;
+  opacity:.25;
+  pointer-events:none;
+  z-index:0;
+}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; font-weight:600; letter-spacing:-.01em;}
+a{color:inherit; text-decoration:none;}
+code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+
+/* ---------- layout shell ---------- */
+.shell{
+  position:relative; z-index:1;
+  display:grid;
+  grid-template-columns:300px 1fr;
+  min-height:100vh;
+}
+@media (max-width:960px){
+  .shell{grid-template-columns:1fr;}
+}
+
+/* ---------- sidebar ---------- */
+.sidebar{
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  padding:22px 16px 60px;
+}
+@media (max-width:960px){
+  .sidebar{position:relative; height:auto; max-height:340px; border-right:none; border-bottom:1px solid var(--border);}
+}
+.sidebar::-webkit-scrollbar{width:8px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+
+.brand{
+  display:flex; align-items:center; gap:10px;
+  padding:4px 8px 18px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
+.brand-mark{
+  width:30px; height:30px; border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--c-advgraphs));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px; color:#06111F;
+  flex-shrink:0;
+}
+.brand-text{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text-dim); line-height:1.35;}
+.brand-text b{color:var(--text); font-weight:600;}
+
+.nav-search-hint{
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint);
+  padding:0 8px 14px; letter-spacing:.02em;
+}
+
+.nav-group{margin-bottom:4px;}
+.nav-group-title{
+  font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-faint);
+  padding:12px 8px 6px;
+  display:flex; align-items:center; gap:8px;
+}
+.nav-group-title .dot{width:7px; height:7px; border-radius:50%; background:var(--dot,var(--accent)); flex-shrink:0;}
+.nav-link{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 8px 7px 14px;
+  border-radius:7px;
+  font-size:13px; color:var(--text-dim);
+  border-left:2px solid transparent;
+  transition:background .15s, color .15s;
+}
+.nav-link:hover{background:var(--surface); color:var(--text);}
+.nav-link.active{background:var(--surface); color:var(--text); border-left:2px solid var(--dot,var(--accent));}
+.nav-link .idx{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--text-faint); width:18px; flex-shrink:0;}
+
+/* ---------- main ---------- */
+main{position:relative; z-index:1; min-width:0;}
+
+.hero{
+  padding:64px 48px 44px;
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(circle at 85% -10%, rgba(94,234,212,.10), transparent 55%),
+    radial-gradient(circle at 10% 110%, rgba(129,140,248,.08), transparent 50%);
+}
+@media (max-width:640px){.hero{padding:40px 20px 32px;}}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent);
+  letter-spacing:.06em; margin-bottom:16px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:"";width:8px;height:8px;background:var(--accent);border-radius:2px; display:inline-block; box-shadow:0 0 12px var(--accent);}
+.hero h1{
+  font-size:clamp(28px,4.2vw,44px); line-height:1.08; max-width:16ch; margin-bottom:18px;
+}
+.hero p.lede{color:var(--text-dim); max-width:62ch; font-size:15.5px; margin-bottom:28px;}
+.stat-row{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; max-width:760px;}
+.stat{flex:1; min-width:140px; padding:16px 20px; border-right:1px solid var(--border); background:var(--surface-2);}
+.stat:last-child{border-right:none;}
+.stat .n{font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; color:var(--text);}
+.stat .l{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint); margin-top:2px; text-transform:uppercase; letter-spacing:.04em;}
+.hero-note{margin-top:22px; font-size:13px; color:var(--text-faint); max-width:62ch; border-left:2px solid var(--border); padding-left:12px;}
+
+.content{padding:8px 48px 100px;}
+@media (max-width:640px){.content{padding:8px 20px 80px;}}
+
+.section-divider{
+  display:flex; align-items:center; gap:14px;
+  margin:52px 0 22px;
+}
+.section-divider .dot{width:10px;height:10px;border-radius:3px; background:var(--dot,var(--accent)); flex-shrink:0;}
+.section-divider h2.group-title{font-size:13px; font-family:'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); white-space:nowrap;}
+.section-divider .line{height:1px; background:var(--border); flex:1;}
+.section-divider .count{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint);}
+
+/* ---------- pattern card ---------- */
+.pattern{
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--surface-2);
+  margin-bottom:22px;
+  padding:26px 26px 8px;
+  scroll-margin-top:20px;
+}
+@media (max-width:640px){.pattern{padding:20px 16px 6px;}}
+.pattern-head{display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:14px;}
+.pattern-idx{
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--dot,var(--accent));
+  border:1px solid var(--border); border-radius:6px; padding:4px 8px; flex-shrink:0;
+  background:rgba(255,255,255,.02);
+}
+.pattern-head h2{font-size:21px; flex:1; min-width:200px;}
+.niche-flag{
+  font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--hard);
+  border:1px solid rgba(251,113,133,.35); background:rgba(251,113,133,.08);
+  border-radius:5px; padding:3px 7px; white-space:nowrap; align-self:flex-start;
+}
+.meta-row{display:grid; gap:10px; margin-bottom:20px;}
+.meta-row p{font-size:14px; color:var(--text-dim);}
+.meta-row p strong{color:var(--text); font-weight:600;}
+.meta-row .ds-list code{
+  background:var(--surface); border:1px solid var(--border); border-radius:5px;
+  padding:1px 6px; font-size:12px; color:var(--accent); margin-right:4px;
+}
+
+/* ---------- problem block ---------- */
+.problem{border-top:1px solid var(--border-soft); padding:18px 0 20px;}
+.problem-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
+.badge{
+  font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:.04em;
+  padding:3px 8px; border-radius:5px; flex-shrink:0;
+}
+.badge-easy{color:var(--easy); background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.3);}
+.badge-medium{color:var(--medium); background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.3);}
+.badge-hard{color:var(--hard); background:rgba(251,113,133,.1); border:1px solid rgba(251,113,133,.3);}
+.problem-head h3{font-size:15.5px; font-weight:600; color:var(--text);}
+.problem-head .lc{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint);}
+.problem p{font-size:13.8px; color:var(--text-dim); margin-bottom:10px;}
+.problem p strong{color:var(--text); font-weight:600;}
+.problem .statement{color:var(--text-dim);}
+
+.code-wrap{position:relative; margin:12px 0 14px;}
+pre{
+  background:var(--bg-2); border:1px solid var(--border); border-radius:9px;
+  padding:16px 16px; overflow-x:auto; font-size:12.6px; line-height:1.55;
+}
+pre code{color:#D6DEEF; white-space:pre;}
+.copy-btn{
+  position:absolute; top:8px; right:8px;
+  font-family:'JetBrains Mono',monospace; font-size:10.5px;
+  background:var(--surface); border:1px solid var(--border); color:var(--text-dim);
+  border-radius:5px; padding:4px 8px; cursor:pointer;
+}
+.copy-btn:hover{color:var(--text); border-color:var(--accent);}
+
+.complexity{
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim);
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:7px;
+  padding:8px 12px; display:inline-block;
+}
+.complexity strong{color:var(--text);}
+
+footer{
+  border-top:1px solid var(--border); padding:30px 48px 60px;
+  font-size:12.5px; color:var(--text-faint); font-family:'JetBrains Mono',monospace;
+}
+@media (max-width:640px){footer{padding:24px 20px 50px;}}
+
+/* mobile sidebar toggle */
+.mobile-toggle{display:none;}
+@media (max-width:960px){
+  .mobile-toggle{
+    display:block; width:100%; text-align:left; background:var(--surface-2);
+    color:var(--text-dim); border:none; border-bottom:1px solid var(--border);
+    padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:12px;
+  }
+  .sidebar-body{display:none;}
+  .sidebar.open .sidebar-body{display:block;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside class="sidebar" id="sidebar">
+  <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Pattern index (28) — tap to expand</button>
+  <div class="sidebar-body">
+  <div class="brand">
+    <div class="brand-mark">Σ</div>
+    <div class="brand-text"><b>Pattern Field Guide</b><br>DSA · NeetCode 250</div>
+  </div>
+  <div class="nav-search-hint">28 PATTERNS · 18 SECTIONS · 84 PROBLEMS</div>
+
+  <nav id="navlist">
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-arrays)"><span class="dot"></span>Arrays &amp; Hashing</div>
+      <a class="nav-link" style="--dot:var(--c-arrays)" href="#hashing"><span class="idx">01</span>Hashing &amp; Frequency Counting</a>
+      <a class="nav-link" style="--dot:var(--c-arrays)" href="#prefix-sum"><span class="idx">02</span>Prefix Sum</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-twoptr)"><span class="dot"></span>Two Pointers</div>
+      <a class="nav-link" style="--dot:var(--c-twoptr)" href="#two-pointers"><span class="idx">03</span>Two Pointers (Opposite Ends)</a>
+      <a class="nav-link" style="--dot:var(--c-twoptr)" href="#fast-slow"><span class="idx">04</span>Fast &amp; Slow Pointers</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-window)"><span class="dot"></span>Sliding Window</div>
+      <a class="nav-link" style="--dot:var(--c-window)" href="#window-fixed"><span class="idx">05</span>Sliding Window — Fixed Size</a>
+      <a class="nav-link" style="--dot:var(--c-window)" href="#window-variable"><span class="idx">06</span>Sliding Window — Variable Size</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-stack)"><span class="dot"></span>Stack</div>
+      <a class="nav-link" style="--dot:var(--c-stack)" href="#mono-stack"><span class="idx">07</span>Monotonic Stack</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-bsearch)"><span class="dot"></span>Binary Search</div>
+      <a class="nav-link" style="--dot:var(--c-bsearch)" href="#binary-search"><span class="idx">08</span>Modified Binary Search</a>
+      <a class="nav-link" style="--dot:var(--c-bsearch)" href="#binary-search-answer"><span class="idx">09</span>Binary Search on the Answer</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-linked)"><span class="dot"></span>Linked List</div>
+      <a class="nav-link" style="--dot:var(--c-linked)" href="#ll-reversal"><span class="idx">10</span>In-Place LL Reversal</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-trees)"><span class="dot"></span>Trees</div>
+      <a class="nav-link" style="--dot:var(--c-trees)" href="#tree-bfs"><span class="idx">11</span>Tree BFS (Level Order)</a>
+      <a class="nav-link" style="--dot:var(--c-trees)" href="#tree-dfs"><span class="idx">12</span>Tree DFS (Recursive)</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-tries)"><span class="dot"></span>Tries</div>
+      <a class="nav-link" style="--dot:var(--c-tries)" href="#trie"><span class="idx">13</span>Trie (Prefix Tree)</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-heap)"><span class="dot"></span>Heap / Priority Queue</div>
+      <a class="nav-link" style="--dot:var(--c-heap)" href="#top-k"><span class="idx">14</span>Top-K Elements</a>
+      <a class="nav-link" style="--dot:var(--c-heap)" href="#two-heaps"><span class="idx">15</span>Two Heaps (Median) · niche</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-backtrack)"><span class="dot"></span>Backtracking</div>
+      <a class="nav-link" style="--dot:var(--c-backtrack)" href="#backtrack-subsets"><span class="idx">16</span>Subsets &amp; Combinations</a>
+      <a class="nav-link" style="--dot:var(--c-backtrack)" href="#backtrack-perms"><span class="idx">17</span>Permutations &amp; Constraints</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-graphs)"><span class="dot"></span>Graphs</div>
+      <a class="nav-link" style="--dot:var(--c-graphs)" href="#graph-traversal"><span class="idx">18</span>Graph DFS / BFS</a>
+      <a class="nav-link" style="--dot:var(--c-graphs)" href="#union-find"><span class="idx">19</span>Union-Find (DSU)</a>
+      <a class="nav-link" style="--dot:var(--c-graphs)" href="#topo-sort"><span class="idx">20</span>Topological Sort</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-advgraphs)"><span class="dot"></span>Advanced Graphs</div>
+      <a class="nav-link" style="--dot:var(--c-advgraphs)" href="#dijkstra"><span class="idx">21</span>Dijkstra's Shortest Path</a>
+      <a class="nav-link" style="--dot:var(--c-advgraphs)" href="#mst"><span class="idx">22</span>Min. Spanning Tree · niche</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-dp1d)"><span class="dot"></span>1-D Dynamic Programming</div>
+      <a class="nav-link" style="--dot:var(--c-dp1d)" href="#dp-1d"><span class="idx">23</span>1-D DP</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-dp2d)"><span class="dot"></span>2-D Dynamic Programming</div>
+      <a class="nav-link" style="--dot:var(--c-dp2d)" href="#dp-2d"><span class="idx">24</span>2-D DP (Grid / LCS)</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-greedy)"><span class="dot"></span>Greedy</div>
+      <a class="nav-link" style="--dot:var(--c-greedy)" href="#greedy"><span class="idx">25</span>Greedy Choice</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-intervals)"><span class="dot"></span>Intervals</div>
+      <a class="nav-link" style="--dot:var(--c-intervals)" href="#intervals"><span class="idx">26</span>Merge Intervals</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-bits)"><span class="dot"></span>Bit Manipulation</div>
+      <a class="nav-link" style="--dot:var(--c-bits)" href="#bit-manip"><span class="idx">27</span>Bit Manipulation</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title" style="--dot:var(--c-math)"><span class="dot"></span>Math &amp; Geometry</div>
+      <a class="nav-link" style="--dot:var(--c-math)" href="#cyclic-sort"><span class="idx">28</span>Cyclic Sort &amp; Matrix Traversal</a>
+    </div>
+  </nav>
+  </div>
+</aside>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">field-guide.dsa — pattern-of-patterns reference</div>
+  <h1>Every DSA pattern, mapped to NeetCode 250.</h1>
+  <p class="lede">A structural reference, not a problem list. Each entry defines the pattern, explains when it fires, names the data structures that carry it, then proves itself on one Easy, one Medium, and one Hard problem drawn from every section of the NeetCode 250 curriculum — core patterns and the niche ones interviewers love to slip in.</p>
+  <div class="stat-row">
+    <div class="stat"><div class="n">28</div><div class="l">Patterns</div></div>
+    <div class="stat"><div class="n">84</div><div class="l">Worked Problems</div></div>
+    <div class="stat"><div class="n">18</div><div class="l">NeetCode Sections</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">Difficulty Tiers Each</div></div>
+  </div>
+  <p class="hero-note">Code is Python 3, written for clarity over cleverness. Difficulty badges follow LeetCode's official tag; a few patterns (Fast &amp; Slow Pointers, Two Heaps, Minimum Spanning Tree, Cyclic Sort) don't have a widely-used canonical <em>Hard</em> problem in the official sense, so the closest advanced problem that leans on the technique is used instead, noted inline.</p>
+</header>
+
+<div class="content">
+<div class="section-divider" style="--dot:var(--c-arrays)"><span class="dot"></span><h2 class="group-title">Arrays &amp; Hashing</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="hashing">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 01 / 28</span>
+    <h2>Hashing &amp; Frequency Counting</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Store values, counts, or a computed key of each element in a hash map or set so membership, frequency, and complement lookups drop from an O(n) scan to O(1) average time.</p>
+    <p><strong>When to use it —</strong> Any time the brute-force approach is "for each element, scan the rest of the array to check something" — duplicate detection, complement search (target − x), grouping by a transformed key, or tallying occurrences.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>hash map</code><code>hash set</code><code>array-as-hash (index encoding)</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Two Sum</h3><span class="lc">LC 1</span></div>
+    <p class="statement">Given an array of integers and a target, return the indices of the two numbers that add up to the target.</p>
+    <p><strong>Why this pattern —</strong> Scan once, storing each seen value's index in a map. For every new number, check whether its complement is already a key — one pass replaces the nested-loop search.</p>
+    <div class="code-wrap"><pre><code>def twoSum(nums, target):
+    seen = {}
+    for i, n in enumerate(nums):
+        complement = target - n
+        if complement in seen:
+            return [seen[complement], i]
+        seen[n] = i
+    return []</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Group Anagrams</h3><span class="lc">LC 49</span></div>
+    <p class="statement">Group an array of strings into lists where every string in a group is an anagram of the others.</p>
+    <p><strong>Why this pattern —</strong> Two strings are anagrams exactly when their 26-length letter-count signature is identical, so that signature (as a tuple) becomes the hash-map key that buckets every word in a single pass.</p>
+    <div class="code-wrap"><pre><code>def groupAnagrams(strs):
+    groups = collections.defaultdict(list)
+    for s in strs:
+        key = [0] * 26
+        for ch in s:
+            key[ord(ch) - ord('a')] += 1
+        groups[tuple(key)].append(s)
+    return list(groups.values())</code></pre></div>
+    <p class="complexity">Time <strong>O(n·k)</strong> (k = avg word length) · Space <strong>O(n·k)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>First Missing Positive</h3><span class="lc">LC 41</span></div>
+    <p class="statement">Given an unsorted integer array, find the smallest missing positive integer in O(n) time and O(1) extra space.</p>
+    <p><strong>Why this pattern —</strong> A hash set would solve this trivially but costs O(n) space. Instead, use the array itself as the hash table: place each value v (1≤v≤n) at index v−1 by swapping. The first index whose value doesn't match index+1 reveals the answer — hashing without allocating a hash structure.</p>
+    <div class="code-wrap"><pre><code>def firstMissingPositive(nums):
+    n = len(nums)
+    for i in range(n):
+        while 1 &lt;= nums[i] &lt;= n and nums[nums[i] - 1] != nums[i]:
+            j = nums[i] - 1
+            nums[i], nums[j] = nums[j], nums[i]
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1
+    return n + 1</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong> extra</p>
+  </div>
+</section>
+
+<section class="pattern" id="prefix-sum">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 02 / 28</span>
+    <h2>Prefix Sum</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Precompute cumulative sums so the sum of any subarray [i, j] is answerable in O(1) via <code style="background:none;border:none;padding:0;color:var(--text)">prefix[j+1] − prefix[i]</code>, instead of re-summing the range on every query.</p>
+    <p><strong>When to use it —</strong> Repeated range-sum queries on an immutable array, counting subarrays that sum to a target (paired with a hash map of prefix-sum counts), or comparing running totals from the left and right simultaneously.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array (prefix table)</code><code>hash map (prefix-sum → count/index)</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Range Sum Query — Immutable</h3><span class="lc">LC 303</span></div>
+    <p class="statement">Given an immutable integer array, implement <code style="background:none;border:none;padding:0;color:var(--text)">sumRange(i, j)</code> to be called many times efficiently.</p>
+    <p><strong>Why this pattern —</strong> The textbook case — build a prefix array once where <code style="background:none;border:none;padding:0;color:var(--text)">prefix[k] = prefix[k-1] + nums[k-1]</code>, and every subsequent query becomes a single subtraction.</p>
+    <div class="code-wrap"><pre><code>class NumArray:
+    def __init__(self, nums):
+        self.prefix = [0]
+        for n in nums:
+            self.prefix.append(self.prefix[-1] + n)
+
+    def sumRange(self, i, j):
+        return self.prefix[j + 1] - self.prefix[i]</code></pre></div>
+    <p class="complexity">Build <strong>O(n)</strong> · Query <strong>O(1)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Subarray Sum Equals K</h3><span class="lc">LC 560</span></div>
+    <p class="statement">Count the number of contiguous subarrays whose elements sum to exactly k.</p>
+    <p><strong>Why this pattern —</strong> A subarray (i, j] sums to k exactly when <code style="background:none;border:none;padding:0;color:var(--text)">prefix[j] − prefix[i] = k</code>, i.e. <code style="background:none;border:none;padding:0;color:var(--text)">prefix[i] = prefix[j] − k</code>. Track how many times each running prefix value has occurred in a hash map, so every index answers "how many valid i's exist" in O(1).</p>
+    <div class="code-wrap"><pre><code>def subarraySum(nums, k):
+    count = collections.defaultdict(int)
+    count[0] = 1
+    total = res = 0
+    for n in nums:
+        total += n
+        res += count[total - k]
+        count[total] += 1
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Maximum Sum of 3 Non-Overlapping Subarrays</h3><span class="lc">LC 689</span></div>
+    <p class="statement">Given an array and fixed length k, find three non-overlapping length-k subarrays with the maximum total sum; return their starting indices (smallest lexicographically on ties).</p>
+    <p><strong>Why this pattern —</strong> First build a prefix/window-sum array so every length-k window sum is O(1) to read. Then build <code style="background:none;border:none;padding:0;color:var(--text)">left[i]</code> = best single window start in [0,i] and <code style="background:none;border:none;padding:0;color:var(--text)">right[i]</code> = best single window start in [i, n-1] from those window sums, and finally scan every valid middle window combining left + mid + right in one pass.</p>
+    <div class="code-wrap"><pre><code>def maxSumOfThreeSubarrays(nums, k):
+    n = len(nums)
+    window = sum(nums[:k])
+    sums = [window]
+    for i in range(k, n):
+        window += nums[i] - nums[i - k]
+        sums.append(window)
+
+    m = len(sums)
+    left = [0] * m
+    best = 0
+    for i in range(m):
+        if sums[i] &gt; sums[best]:
+            best = i
+        left[i] = best
+
+    right = [0] * m
+    best = m - 1
+    for i in range(m - 1, -1, -1):
+        if sums[i] &gt;= sums[best]:
+            best = i
+        right[i] = best
+
+    result, bestTotal = None, -1
+    for mid in range(k, m - k):
+        l, r = left[mid - k], right[mid + k]
+        total = sums[l] + sums[mid] + sums[r]
+        if total &gt; bestTotal:
+            bestTotal, result = total, [l, mid, r]
+    return result</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-twoptr)"><span class="dot"></span><h2 class="group-title">Two Pointers</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="two-pointers">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 03 / 28</span>
+    <h2>Two Pointers (Opposite Ends)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Walk two indices toward each other across a sorted or structured sequence, eliminating one side each step based on a comparison, so the search space shrinks linearly instead of quadratically.</p>
+    <p><strong>When to use it —</strong> Sorted-array target sums, palindrome checks, area/container maximization, partitioning — anywhere a nested loop would compare "every pair" but the array's order lets you rule out a whole side at once.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array</code><code>string</code> (two index variables — no extra structure required)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Valid Palindrome</h3><span class="lc">LC 125</span></div>
+    <p class="statement">Given a string, determine if it's a palindrome considering only alphanumeric characters and ignoring case.</p>
+    <p><strong>Why this pattern —</strong> Point l at the start and r at the end; skip non-alphanumeric characters on either side, compare what's left, and close inward — a mismatch is an immediate false.</p>
+    <div class="code-wrap"><pre><code>def isPalindrome(s):
+    l, r = 0, len(s) - 1
+    while l &lt; r:
+        while l &lt; r and not s[l].isalnum():
+            l += 1
+        while l &lt; r and not s[r].isalnum():
+            r -= 1
+        if s[l].lower() != s[r].lower():
+            return False
+        l += 1
+        r -= 1
+    return True</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>3Sum</h3><span class="lc">LC 15</span></div>
+    <p class="statement">Find all unique triplets in an array that sum to zero.</p>
+    <p><strong>Why this pattern —</strong> Sort first, fix one number, then run an opposite-ends two-pointer scan on the remainder to find pairs summing to its negation — an O(n³) brute force collapses to O(n²), skipping duplicates at the fixed index and at both pointers.</p>
+    <div class="code-wrap"><pre><code>def threeSum(nums):
+    nums.sort()
+    res = []
+    for i in range(len(nums)):
+        if i &gt; 0 and nums[i] == nums[i - 1]:
+            continue
+        l, r = i + 1, len(nums) - 1
+        while l &lt; r:
+            total = nums[i] + nums[l] + nums[r]
+            if total &lt; 0:
+                l += 1
+            elif total &gt; 0:
+                r -= 1
+            else:
+                res.append([nums[i], nums[l], nums[r]])
+                l += 1
+                while l &lt; r and nums[l] == nums[l - 1]:
+                    l += 1
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n²)</strong> · Space <strong>O(1)</strong> extra (excluding output)</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Trapping Rain Water</h3><span class="lc">LC 42</span></div>
+    <p class="statement">Given elevation heights, compute how much rainwater is trapped between the bars.</p>
+    <p><strong>Why this pattern —</strong> Water trapped at index i is <code style="background:none;border:none;padding:0;color:var(--text)">min(maxLeft, maxRight) − height[i]</code>. Instead of precomputing both arrays, walk l and r inward and always advance the side with the smaller current max — that side's trapped water is fully determined, because the taller side guarantees a higher ceiling already exists.</p>
+    <div class="code-wrap"><pre><code>def trap(height):
+    l, r = 0, len(height) - 1
+    leftMax, rightMax = 0, 0
+    water = 0
+    while l &lt; r:
+        if height[l] &lt; height[r]:
+            leftMax = max(leftMax, height[l])
+            water += leftMax - height[l]
+            l += 1
+        else:
+            rightMax = max(rightMax, height[r])
+            water += rightMax - height[r]
+            r -= 1
+    return water</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="fast-slow">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 04 / 28</span>
+    <h2>Fast &amp; Slow Pointers</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Advance two pointers through a sequence at different speeds — typically 1 step and 2 steps — so their relative displacement reveals structure: a cycle, its entry point, or a functional-graph collision.</p>
+    <p><strong>When to use it —</strong> Cycle detection in a linked list, finding the middle node without a length pass, or detecting a "duplicate" by treating array values as implicit next-pointers.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>linked list</code><code>array (as implicit functional graph)</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Linked List Cycle</h3><span class="lc">LC 141</span></div>
+    <p class="statement">Determine whether a linked list contains a cycle.</p>
+    <p><strong>Why this pattern —</strong> If slow moves 1 node per step and fast moves 2, and a cycle exists, fast eventually laps slow and they occupy the same node; if the list is acyclic, fast simply reaches null first.</p>
+    <div class="code-wrap"><pre><code>def hasCycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Linked List Cycle II</h3><span class="lc">LC 142</span></div>
+    <p class="statement">If the list has a cycle, return the node where the cycle begins.</p>
+    <p><strong>Why this pattern —</strong> After slow and fast meet inside the loop, resetting one pointer to head and advancing both one step at a time makes them meet exactly at the cycle's entrance — a direct consequence of the distance algebra between the meeting point and the entry node.</p>
+    <div class="code-wrap"><pre><code>def detectCycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            ptr = head
+            while ptr is not slow:
+                ptr = ptr.next
+                slow = slow.next
+            return ptr
+    return None</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Find the Duplicate Number</h3><span class="lc">LC 287 · hard-tier pick</span></div>
+    <p class="statement">Given n+1 integers in the range [1, n] with exactly one number repeated (possibly more than once), find it without modifying the array and in O(1) extra space.</p>
+    <p><strong>Why this pattern —</strong> Interpret <code style="background:none;border:none;padding:0;color:var(--text)">nums</code> as a linked list where index i points to index <code style="background:none;border:none;padding:0;color:var(--text)">nums[i]</code>. Because a value repeats, two different indices point to the same next index — that collision forces a cycle, so Floyd's algorithm finds the duplicate exactly like finding a cycle's entrance.</p>
+    <div class="code-wrap"><pre><code>def findDuplicate(nums):
+    slow = fast = nums[0]
+    while True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        if slow == fast:
+            break
+    slow2 = nums[0]
+    while slow2 != slow:
+        slow2 = nums[slow2]
+        slow = nums[slow]
+    return slow</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+</section>
+<div class="section-divider" style="--dot:var(--c-window)"><span class="dot"></span><h2 class="group-title">Sliding Window</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="window-fixed">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 05 / 28</span>
+    <h2>Sliding Window — Fixed Size</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Maintain a window of constant width k over a sequence; slide it one step at a time, removing the element that falls out the back and adding the one entering the front, updating the running aggregate in O(1) instead of recomputing the whole window.</p>
+    <p><strong>When to use it —</strong> Fixed-length subarray or substring statistics — max, min, or average of every window of size k, anagram-window matching, or windowed maximum with a monotonic deque.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array / string</code> (window bounds)<code>deque</code> (windowed max/min)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Maximum Average Subarray I</h3><span class="lc">LC 643</span></div>
+    <p class="statement">Given an array and integer k, find the maximum average value of a contiguous subarray of length k.</p>
+    <p><strong>Why this pattern —</strong> Keep a running sum of the last k elements; each slide subtracts the outgoing element and adds the incoming one, avoiding an O(n·k) re-sum.</p>
+    <div class="code-wrap"><pre><code>def findMaxAverage(nums, k):
+    window = sum(nums[:k])
+    best = window
+    for i in range(k, len(nums)):
+        window += nums[i] - nums[i - k]
+        best = max(best, window)
+    return best / k</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Permutation in String</h3><span class="lc">LC 567</span></div>
+    <p class="statement">Given strings s1 and s2, determine whether s2 contains a permutation of s1 (a window whose letter counts match s1's).</p>
+    <p><strong>Why this pattern —</strong> The window width is fixed at len(s1); slide it across s2 one character at a time, incrementally updating a 26-length count array (increment the entering character, decrement the one leaving) and comparing to s1's target counts.</p>
+    <div class="code-wrap"><pre><code>def checkInclusion(s1, s2):
+    need, window = [0] * 26, [0] * 26
+    for ch in s1:
+        need[ord(ch) - ord('a')] += 1
+    k = len(s1)
+    for i, ch in enumerate(s2):
+        window[ord(ch) - ord('a')] += 1
+        if i &gt;= k:
+            out = ord(s2[i - k]) - ord('a')
+            window[out] -= 1
+        if i &gt;= k - 1 and window == need:
+            return True
+    return False</code></pre></div>
+    <p class="complexity">Time <strong>O(26n) ≈ O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Sliding Window Maximum</h3><span class="lc">LC 239</span></div>
+    <p class="statement">Given an array and window size k, return the maximum of every window of size k as it slides left to right.</p>
+    <p><strong>Why this pattern —</strong> A plain fixed window tracks a sum in O(1), but tracking a max needs a monotonic decreasing deque of indices: pop smaller trailing values before pushing the new one (they can never win again while the new value is in play), and drop the front once it slides out of range. The deque's front is always the current window's max.</p>
+    <div class="code-wrap"><pre><code>def maxSlidingWindow(nums, k):
+    dq = collections.deque()
+    res = []
+    for i, n in enumerate(nums):
+        while dq and nums[dq[-1]] &lt; n:
+            dq.pop()
+        dq.append(i)
+        if dq[0] &lt;= i - k:
+            dq.popleft()
+        if i &gt;= k - 1:
+            res.append(nums[dq[0]])
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> (each index pushed/popped once) · Space <strong>O(k)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="window-variable">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 06 / 28</span>
+    <h2>Sliding Window — Variable Size</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Grow the window by moving the right pointer until a condition breaks or is satisfied, then shrink from the left until it's valid again, tracking the best window seen — the width adapts to the data instead of staying fixed.</p>
+    <p><strong>When to use it —</strong> Longest/shortest substring or subarray satisfying a constraint (no repeats, sum ≥ target), and "best single pass" problems where you track a running minimum or maximum as you extend right.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array / string</code> (two pointers)<code>hash map / set</code> (window contents)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Best Time to Buy and Sell Stock</h3><span class="lc">LC 121</span></div>
+    <p class="statement">Given daily prices, maximize profit from one buy followed by one later sell.</p>
+    <p><strong>Why this pattern —</strong> The implicit window is [buy day, sell day]. Walk right through prices tracking the minimum price seen so far — the effective left edge collapses to the cheapest buy point — and at each day compute price − minSoFar as a candidate profit.</p>
+    <div class="code-wrap"><pre><code>def maxProfit(prices):
+    minPrice = float('inf')
+    best = 0
+    for p in prices:
+        minPrice = min(minPrice, p)
+        best = max(best, p - minPrice)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Longest Substring Without Repeating Characters</h3><span class="lc">LC 3</span></div>
+    <p class="statement">Find the length of the longest substring without repeating characters.</p>
+    <p><strong>Why this pattern —</strong> Extend right, recording each character's last-seen index. The moment a repeat appears inside the current window, jump the left pointer past that character's previous occurrence instead of restarting — the window only ever grows or jumps forward, never rescans.</p>
+    <div class="code-wrap"><pre><code>def lengthOfLongestSubstring(s):
+    last_seen = {}
+    left = 0
+    best = 0
+    for right, ch in enumerate(s):
+        if ch in last_seen and last_seen[ch] &gt;= left:
+            left = last_seen[ch] + 1
+        last_seen[ch] = right
+        best = max(best, right - left + 1)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(min(n, alphabet))</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Minimum Window Substring</h3><span class="lc">LC 76</span></div>
+    <p class="statement">Given strings s and t, find the smallest substring of s that contains every character of t (with multiplicity).</p>
+    <p><strong>Why this pattern —</strong> Expand right, adding characters until the window covers all of t's required counts, then greedily contract left as far as possible while it's still valid, recording the smallest valid window seen. A "need" counter plus a single "missing" tally avoids rescanning the window on every check.</p>
+    <div class="code-wrap"><pre><code>def minWindow(s, t):
+    if not t or not s:
+        return ""
+    need = collections.Counter(t)
+    missing = len(t)
+    left = start = end = 0
+    for right, ch in enumerate(s, 1):
+        if need[ch] &gt; 0:
+            missing -= 1
+        need[ch] -= 1
+        if missing == 0:
+            while need[s[left]] &lt; 0:
+                need[s[left]] += 1
+                left += 1
+            if end == 0 or right - left &lt; end - start:
+                start, end = left, right
+            need[s[left]] += 1
+            missing += 1
+            left += 1
+    return s[start:end]</code></pre></div>
+    <p class="complexity">Time <strong>O(n + m)</strong> · Space <strong>O(alphabet)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-stack)"><span class="dot"></span><h2 class="group-title">Stack</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="mono-stack">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 07 / 28</span>
+    <h2>Monotonic Stack</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Maintain a stack whose elements stay strictly increasing or decreasing from bottom to top by popping every element that violates the order before pushing the new one — each pop marks that a "next greater/smaller" answer was just found for the popped element.</p>
+    <p><strong>When to use it —</strong> Next-greater/smaller element queries, "wait until warmer" style problems, and largest-rectangle style area problems where you need, for every element, the nearest smaller element on each side.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>stack</code> (holding values or indices)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Next Greater Element I</h3><span class="lc">LC 496</span></div>
+    <p class="statement">For each element of nums1 (a subset of nums2), find its next greater element to the right in nums2, or −1 if none exists.</p>
+    <p><strong>Why this pattern —</strong> Scan nums2 once with a decreasing stack of values. Whenever the current number beats the stack's top, that top just found its next-greater — pop it, record the mapping, then push the current number.</p>
+    <div class="code-wrap"><pre><code>def nextGreaterElement(nums1, nums2):
+    next_greater = {}
+    stack = []
+    for n in nums2:
+        while stack and stack[-1] &lt; n:
+            next_greater[stack.pop()] = n
+        stack.append(n)
+    return [next_greater.get(n, -1) for n in nums1]</code></pre></div>
+    <p class="complexity">Time <strong>O(n + m)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Daily Temperatures</h3><span class="lc">LC 739</span></div>
+    <p class="statement">For each day, find how many days must pass until a warmer temperature; 0 if never.</p>
+    <p><strong>Why this pattern —</strong> Keep a stack of indices with decreasing temperatures. When today beats the temperature at the index on top, that index's wait is <code style="background:none;border:none;padding:0;color:var(--text)">today − index</code> days — pop and record it, repeating until the top is warmer than today or the stack empties.</p>
+    <div class="code-wrap"><pre><code>def dailyTemperatures(temperatures):
+    res = [0] * len(temperatures)
+    stack = []
+    for i, t in enumerate(temperatures):
+        while stack and temperatures[stack[-1]] &lt; t:
+            j = stack.pop()
+            res[j] = i - j
+        stack.append(i)
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Largest Rectangle in Histogram</h3><span class="lc">LC 84</span></div>
+    <p class="statement">Given bar heights, find the area of the largest rectangle that fits within the histogram.</p>
+    <p><strong>Why this pattern —</strong> The widest rectangle a bar can anchor spans from the first shorter bar on its left to the first shorter bar on its right. An increasing stack of indices finds exactly that: when a shorter bar arrives, pop the stack computing each popped bar's area using the new bar as its right boundary and the newly-exposed stack top as its left boundary.</p>
+    <div class="code-wrap"><pre><code>def largestRectangleArea(heights):
+    stack = []
+    best = 0
+    for i, h in enumerate(heights + [0]):
+        while stack and heights[stack[-1]] &gt;= h:
+            height = heights[stack.pop()]
+            width = i if not stack else i - stack[-1] - 1
+            best = max(best, height * width)
+        stack.append(i)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-bsearch)"><span class="dot"></span><h2 class="group-title">Binary Search</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="binary-search">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 08 / 28</span>
+    <h2>Modified Binary Search</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Repeatedly halve a sorted (or "sorted enough" — rotated, bitonic) range by comparing the midpoint against a condition, discarding the half that can't contain the answer, so the search runs in O(log n) instead of O(n).</p>
+    <p><strong>When to use it —</strong> Searching a sorted or rotated-sorted array, finding a boundary or first/last occurrence, or any structure where one comparison at the midpoint tells you which half to keep.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array</code> (sorted or rotated-sorted)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Binary Search</h3><span class="lc">LC 704</span></div>
+    <p class="statement">Given a sorted array and a target, return its index or −1.</p>
+    <p><strong>Why this pattern —</strong> The vanilla case: compare the target to the midpoint and discard the half that can't contain it.</p>
+    <div class="code-wrap"><pre><code>def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] &lt; target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1</code></pre></div>
+    <p class="complexity">Time <strong>O(log n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Search in Rotated Sorted Array</h3><span class="lc">LC 33</span></div>
+    <p class="statement">Search for a target in a rotated sorted array (rotated at an unknown pivot) in O(log n).</p>
+    <p><strong>Why this pattern —</strong> At every midpoint, one half — left-to-mid or mid-to-right — is still normally sorted even though the whole array isn't. Determine which half is sorted, check whether the target lies inside that sorted half's range, and discard accordingly — the same halving logic with one extra branch.</p>
+    <div class="code-wrap"><pre><code>def search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] &lt;= nums[mid]:
+            if nums[lo] &lt;= target &lt; nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:
+            if nums[mid] &lt; target &lt;= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1</code></pre></div>
+    <p class="complexity">Time <strong>O(log n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Median of Two Sorted Arrays</h3><span class="lc">LC 4</span></div>
+    <p class="statement">Given two sorted arrays, find the median of the combined array in O(log(min(m, n))) time.</p>
+    <p><strong>Why this pattern —</strong> Binary search on the <em>partition point</em> of the smaller array instead of on values. For a candidate partition i in array A, the matching partition j in B is fixed by the target left-half size. Halve on i until <code style="background:none;border:none;padding:0;color:var(--text)">maxLeftA ≤ minRightB</code> and <code style="background:none;border:none;padding:0;color:var(--text)">maxLeftB ≤ minRightA</code>, which certifies a valid overall partition — the median then reads directly off the four boundary values.</p>
+    <div class="code-wrap"><pre><code>def findMedianSortedArrays(A, B):
+    if len(A) &gt; len(B):
+        A, B = B, A
+    m, n = len(A), len(B)
+    lo, hi = 0, m
+    while lo &lt;= hi:
+        i = (lo + hi) // 2
+        j = (m + n + 1) // 2 - i
+        Aleft  = A[i - 1] if i &gt; 0 else float('-inf')
+        Aright = A[i]     if i &lt; m else float('inf')
+        Bleft  = B[j - 1] if j &gt; 0 else float('-inf')
+        Bright = B[j]     if j &lt; n else float('inf')
+        if Aleft &lt;= Bright and Bleft &lt;= Aright:
+            if (m + n) % 2 == 1:
+                return max(Aleft, Bleft)
+            return (max(Aleft, Bleft) + min(Aright, Bright)) / 2
+        elif Aleft &gt; Bright:
+            hi = i - 1
+        else:
+            lo = i + 1</code></pre></div>
+    <p class="complexity">Time <strong>O(log(min(m, n)))</strong> · Space <strong>O(1)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="binary-search-answer">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 09 / 28</span>
+    <h2>Binary Search on the Answer</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> When the answer lives in a monotonic range (if value X works, every value beyond X also works), binary search over <em>candidate answers</em> rather than array indices — check feasibility at the midpoint with a helper function and shrink the range accordingly.</p>
+    <p><strong>When to use it —</strong> "Minimize the maximum" or "maximize the minimum" problems — smallest capacity that still finishes in time, largest minimum distance — especially when no closed-form formula exists but a feasibility check does.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> none beyond the input array fed to a feasibility check — the search structure is the answer's own value range</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Sqrt(x)</h3><span class="lc">LC 69</span></div>
+    <p class="statement">Given a non-negative integer x, return floor(√x) without using a built-in power function.</p>
+    <p><strong>Why this pattern —</strong> The answer space [0, x] is monotonic — if k·k ≤ x, every value below k also satisfies it, and above k it fails. Binary search that boundary directly instead of scanning up from 0.</p>
+    <div class="code-wrap"><pre><code>def mySqrt(x):
+    lo, hi = 0, x
+    ans = 0
+    while lo &lt;= hi:
+        mid = (lo + hi) // 2
+        if mid * mid &lt;= x:
+            ans = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return ans</code></pre></div>
+    <p class="complexity">Time <strong>O(log x)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Koko Eating Bananas</h3><span class="lc">LC 875</span></div>
+    <p class="statement">Koko eats at speed k bananas/hour from piles of bananas; find the minimum integer k so she finishes all piles within h hours.</p>
+    <p><strong>Why this pattern —</strong> As k increases, the total hours needed only decreases — monotonic. Binary search k over [1, max(piles)], and for each candidate run an O(n) feasibility check (sum of ceil(pile / k)) to decide which half of the speed range to keep.</p>
+    <div class="code-wrap"><pre><code>def minEatingSpeed(piles, h):
+    lo, hi = 1, max(piles)
+    while lo &lt; hi:
+        k = (lo + hi) // 2
+        hours = sum((p + k - 1) // k for p in piles)
+        if hours &lt;= h:
+            hi = k
+        else:
+            lo = k + 1
+    return lo</code></pre></div>
+    <p class="complexity">Time <strong>O(n·log(max(piles)))</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Split Array Largest Sum</h3><span class="lc">LC 410</span></div>
+    <p class="statement">Split an array into m contiguous subarrays to minimize the largest subarray sum.</p>
+    <p><strong>Why this pattern —</strong> The answer space is "largest allowed subarray sum," ranging from max(nums) to sum(nums), and it's monotonic — a larger cap always makes it at least as easy to fit into m subarrays. Binary search that cap, using a greedy O(n) feasibility check (how many subarrays are needed if none may exceed the candidate cap) to decide direction.</p>
+    <div class="code-wrap"><pre><code>def splitArray(nums, m):
+    def subarrays_needed(cap):
+        count, current = 1, 0
+        for n in nums:
+            if current + n &gt; cap:
+                count += 1
+                current = n
+            else:
+                current += n
+        return count
+
+    lo, hi = max(nums), sum(nums)
+    while lo &lt; hi:
+        cap = (lo + hi) // 2
+        if subarrays_needed(cap) &lt;= m:
+            hi = cap
+        else:
+            lo = cap + 1
+    return lo</code></pre></div>
+    <p class="complexity">Time <strong>O(n·log(sum(nums)))</strong> · Space <strong>O(1)</strong></p>
+  </div>
+</section>
+<div class="section-divider" style="--dot:var(--c-linked)"><span class="dot"></span><h2 class="group-title">Linked List</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="ll-reversal">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 10 / 28</span>
+    <h2>In-Place Linked List Reversal</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Reverse the direction of next-pointers within a (sub)segment of a linked list by walking through it once and redirecting each node's next pointer to the previous node, using O(1) extra pointers instead of copying into a new structure.</p>
+    <p><strong>When to use it —</strong> Reversing a whole list, reversing a sublist between two positions, or reversing fixed-size groups of nodes — anywhere an in-place structural rewrite beats allocating a new list.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>linked list</code> (three tracking pointers: prev, curr, next)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Reverse Linked List</h3><span class="lc">LC 206</span></div>
+    <p class="statement">Reverse a singly linked list.</p>
+    <p><strong>Why this pattern —</strong> Walk curr through the list; at each node, save next before overwriting curr.next to point at prev, then advance both prev and curr — one pass rewires every pointer.</p>
+    <div class="code-wrap"><pre><code>def reverseList(head):
+    prev = None
+    curr = head
+    while curr:
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    return prev</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Reverse Linked List II</h3><span class="lc">LC 92</span></div>
+    <p class="statement">Reverse only the sublist from position <em>left</em> to position <em>right</em>.</p>
+    <p><strong>Why this pattern —</strong> Walk to the node just before position left, then apply the same in-place reversal only within the [left, right] window using head-insertion, and splice the reversed segment back into the surrounding list.</p>
+    <div class="code-wrap"><pre><code>def reverseBetween(head, left, right):
+    dummy = ListNode(0, head)
+    prev = dummy
+    for _ in range(left - 1):
+        prev = prev.next
+    curr = prev.next
+    for _ in range(right - left):
+        nxt = curr.next
+        curr.next = nxt.next
+        nxt.next = prev.next
+        prev.next = nxt
+    return dummy.next</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Reverse Nodes in k-Group</h3><span class="lc">LC 25</span></div>
+    <p class="statement">Reverse every consecutive group of k nodes; a final group shorter than k is left unchanged.</p>
+    <p><strong>Why this pattern —</strong> First confirm the group actually has k nodes (otherwise stop and return as-is), then apply the same prev/curr/next in-place reversal to exactly that group, and reconnect the reversed group's tail to the recursively-processed remainder — the same primitive applied group by group with careful boundary bookkeeping.</p>
+    <div class="code-wrap"><pre><code>def reverseKGroup(head, k):
+    node = head
+    for _ in range(k):
+        if not node:
+            return head
+        node = node.next
+    prev = None
+    curr = head
+    for _ in range(k):
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    head.next = reverseKGroup(curr, k)
+    return prev</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n/k)</strong> recursion</p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-trees)"><span class="dot"></span><h2 class="group-title">Trees</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="tree-bfs">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 11 / 28</span>
+    <h2>Tree BFS (Level Order)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Traverse a tree (or implicit tree/graph) breadth-first using a queue, processing nodes level by level so every node at depth d is visited before any node at depth d+1.</p>
+    <p><strong>When to use it —</strong> Level-order output, per-level aggregates, and — critically — shortest-path questions in unweighted structures, since BFS guarantees the first time a target is reached is via the shortest route.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>queue</code><code>tree / graph</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Minimum Depth of Binary Tree</h3><span class="lc">LC 111</span></div>
+    <p class="statement">Find the length of the shortest path from the root to the nearest leaf.</p>
+    <p><strong>Why this pattern —</strong> BFS explores level by level, so the very first leaf encountered is guaranteed to be at the minimum depth — no need to explore any deeper level once it's found.</p>
+    <div class="code-wrap"><pre><code>def minDepth(root):
+    if not root:
+        return 0
+    queue = collections.deque([(root, 1)])
+    while queue:
+        node, depth = queue.popleft()
+        if not node.left and not node.right:
+            return depth
+        if node.left:
+            queue.append((node.left, depth + 1))
+        if node.right:
+            queue.append((node.right, depth + 1))
+    return 0</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Binary Tree Level Order Traversal</h3><span class="lc">LC 102</span></div>
+    <p class="statement">Return the values of a binary tree's nodes grouped level by level.</p>
+    <p><strong>Why this pattern —</strong> Snapshot the queue's size before pushing any children for the current step — that snapshot is exactly the boundary between "this level" and "the next," letting the traversal emit one list per depth.</p>
+    <div class="code-wrap"><pre><code>def levelOrder(root):
+    if not root:
+        return []
+    result = []
+    queue = collections.deque([root])
+    while queue:
+        level = []
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        result.append(level)
+    return result</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Word Ladder</h3><span class="lc">LC 127</span></div>
+    <p class="statement">Given a start word, end word, and a word list, find the length of the shortest transformation sequence changing one letter at a time, each intermediate word valid.</p>
+    <p><strong>Why this pattern —</strong> Model each word as a node and each one-letter-apart pair as an edge. BFS explores this implicit graph level by level exactly as it would a tree, so the first time endWord is dequeued, its recorded step count is the shortest transformation length.</p>
+    <div class="code-wrap"><pre><code>def ladderLength(beginWord, endWord, wordList):
+    words = set(wordList)
+    if endWord not in words:
+        return 0
+    queue = collections.deque([(beginWord, 1)])
+    while queue:
+        word, steps = queue.popleft()
+        if word == endWord:
+            return steps
+        for i in range(len(word)):
+            for c in 'abcdefghijklmnopqrstuvwxyz':
+                candidate = word[:i] + c + word[i + 1:]
+                if candidate in words:
+                    words.remove(candidate)
+                    queue.append((candidate, steps + 1))
+    return 0</code></pre></div>
+    <p class="complexity">Time <strong>O(n·L·26)</strong> (n = word count, L = word length) · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="tree-dfs">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 12 / 28</span>
+    <h2>Tree DFS (Recursive Traversal)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Traverse a tree depth-first — pre/in/post-order — recursing into children before backtracking, threading state down through the call stack (accumulated path, inherited bounds) and combining children's results back up on return.</p>
+    <p><strong>When to use it —</strong> Path-sum problems, validating structural invariants (BST property, balance), computing per-subtree aggregates a parent needs, and serialization.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>tree</code><code>call stack</code> (implicit)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Maximum Depth of Binary Tree</h3><span class="lc">LC 104</span></div>
+    <p class="statement">Find the maximum depth — the number of nodes along the longest root-to-leaf path.</p>
+    <p><strong>Why this pattern —</strong> A node's depth is 1 + the deeper of its two children's depths — a direct post-order recursion where the answer bubbles up from the leaves.</p>
+    <div class="code-wrap"><pre><code>def maxDepth(root):
+    if not root:
+        return 0
+    return 1 + max(maxDepth(root.left), maxDepth(root.right))</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(h)</strong> (h = tree height)</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Validate Binary Search Tree</h3><span class="lc">LC 98</span></div>
+    <p class="statement">Determine whether a binary tree is a valid binary search tree.</p>
+    <p><strong>Why this pattern —</strong> Pass a valid (low, high) range down through the recursion; each node must fall inside its inherited range, and it narrows that range differently for each child — state flows down, a boolean validity flows back up.</p>
+    <div class="code-wrap"><pre><code>def isValidBST(root, low=float('-inf'), high=float('inf')):
+    if not root:
+        return True
+    if not (low &lt; root.val &lt; high):
+        return False
+    return (isValidBST(root.left, low, root.val) and
+            isValidBST(root.right, root.val, high))</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(h)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Binary Tree Maximum Path Sum</h3><span class="lc">LC 124</span></div>
+    <p class="statement">Find the maximum sum of any path between any two nodes in a binary tree (the path need not pass through the root).</p>
+    <p><strong>Why this pattern —</strong> Each call computes two different things: the best "extendable" path this node can offer its parent (the actual return value, post-order), and the best "through this node" path using both children at once, which only updates a global best as a side effect. The final answer is never the top-level return value — only what got tracked along the way.</p>
+    <div class="code-wrap"><pre><code>def maxPathSum(root):
+    best = float('-inf')
+
+    def dfs(node):
+        nonlocal best
+        if not node:
+            return 0
+        left = max(dfs(node.left), 0)
+        right = max(dfs(node.right), 0)
+        best = max(best, node.val + left + right)
+        return node.val + max(left, right)
+
+    dfs(root)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(h)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-tries)"><span class="dot"></span><h2 class="group-title">Tries</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="trie">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 13 / 28</span>
+    <h2>Trie (Prefix Tree)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> A tree where each edge represents one character and each root-to-node path represents a prefix; nodes flag whether a complete word ends there, letting prefix and whole-word queries run in O(word length) instead of scanning every stored string.</p>
+    <p><strong>When to use it —</strong> Autocomplete, prefix search, word-existence dictionaries (including wildcard support), and grid word-search problems where many target words share prefixes worth pruning together.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>trie node</code> (hash map / array of children + end-of-word flag)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Implement Trie (Prefix Tree)</h3><span class="lc">LC 208 · foundational</span></div>
+    <p class="statement">Build a Trie supporting <code style="background:none;border:none;padding:0;color:var(--text)">insert(word)</code>, <code style="background:none;border:none;padding:0;color:var(--text)">search(word)</code>, and <code style="background:none;border:none;padding:0;color:var(--text)">startsWith(prefix)</code>. (LeetCode tags this Medium; used here as the foundational build-the-structure example.)</p>
+    <p><strong>Why this pattern —</strong> This <em>is</em> the pattern itself — each insert walks or creates one child per character, and search / startsWith just walk existing children, failing fast the moment a character is missing.</p>
+    <div class="code-wrap"><pre><code>class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_word = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node = self.root
+        for ch in word:
+            node = node.children.setdefault(ch, TrieNode())
+        node.is_word = True
+
+    def _find(self, word):
+        node = self.root
+        for ch in word:
+            if ch not in node.children:
+                return None
+            node = node.children[ch]
+        return node
+
+    def search(self, word):
+        node = self._find(word)
+        return node is not None and node.is_word
+
+    def startsWith(self, prefix):
+        return self._find(prefix) is not None</code></pre></div>
+    <p class="complexity">Time <strong>O(L)</strong> per op (L = word length) · Space <strong>O(total characters stored)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Design Add and Search Words Data Structure</h3><span class="lc">LC 211</span></div>
+    <p class="statement">Support adding words and searching, where a search query may contain '.' as a wildcard matching any single character.</p>
+    <p><strong>Why this pattern —</strong> Insertion is identical to a plain trie; search becomes a DFS over the trie that branches into <em>every</em> child whenever it meets a '.', instead of following one deterministic edge.</p>
+    <div class="code-wrap"><pre><code>class WordDictionary:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def addWord(self, word):
+        node = self.root
+        for ch in word:
+            node = node.children.setdefault(ch, TrieNode())
+        node.is_word = True
+
+    def search(self, word):
+        def dfs(node, i):
+            if i == len(word):
+                return node.is_word
+            ch = word[i]
+            if ch == '.':
+                return any(dfs(child, i + 1) for child in node.children.values())
+            if ch not in node.children:
+                return False
+            return dfs(node.children[ch], i + 1)
+        return dfs(self.root, 0)</code></pre></div>
+    <p class="complexity">Time <strong>O(L)</strong> best case, <strong>O(26^L)</strong> wildcard-heavy worst case · Space <strong>O(total characters)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Word Search II</h3><span class="lc">LC 212</span></div>
+    <p class="statement">Given a grid of letters and a list of words, return every word that can be formed by a path of adjacent cells.</p>
+    <p><strong>Why this pattern —</strong> Build one trie from all target words, then DFS from every grid cell, walking the trie alongside the grid path. If the current cell's letter isn't a trie child, prune immediately — many words are eliminated together instead of running a separate grid search per word.</p>
+    <div class="code-wrap"><pre><code>def findWords(board, words):
+    root = TrieNode()
+    for w in words:
+        node = root
+        for ch in w:
+            node = node.children.setdefault(ch, TrieNode())
+        node.is_word = w
+
+    rows, cols = len(board), len(board[0])
+    found = []
+
+    def dfs(r, c, node):
+        ch = board[r][c]
+        if ch not in node.children:
+            return
+        nxt = node.children[ch]
+        if nxt.is_word:
+            found.append(nxt.is_word)
+            nxt.is_word = None
+        board[r][c] = '#'
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = r + dr, c + dc
+            if 0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols and board[nr][nc] != '#':
+                dfs(nr, nc, nxt)
+        board[r][c] = ch
+
+    for r in range(rows):
+        for c in range(cols):
+            dfs(r, c, root)
+    return found</code></pre></div>
+    <p class="complexity">Time <strong>O(rows·cols·4^L)</strong> worst case · Space <strong>O(total characters in words)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-heap)"><span class="dot"></span><h2 class="group-title">Heap / Priority Queue</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="top-k">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 14 / 28</span>
+    <h2>Top-K Elements (Heap)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Maintain a heap of size k (min-heap for "largest k", max-heap for "smallest k") while scanning the data once, pushing new candidates and popping the weakest whenever the heap exceeds size k — the full dataset never needs sorting, only k elements are ever held.</p>
+    <p><strong>When to use it —</strong> Kth largest/smallest, top-k frequent, k closest points, and streaming statistics where the whole dataset can't be held or re-sorted on every update.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>heap (priority queue)</code><code>hash map</code> (frequency-based variants)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Kth Largest Element in a Stream</h3><span class="lc">LC 703</span></div>
+    <p class="statement">Design a class that, given a stream of integers, returns the kth largest element after each addition.</p>
+    <p><strong>Why this pattern —</strong> Keep a min-heap of exactly the k largest values seen so far; its root is always the current kth largest, and adding a value is just a push followed by a pop if the heap grows past size k.</p>
+    <div class="code-wrap"><pre><code>class KthLargest:
+    def __init__(self, k, nums):
+        self.k = k
+        self.heap = nums
+        heapq.heapify(self.heap)
+        while len(self.heap) &gt; k:
+            heapq.heappop(self.heap)
+
+    def add(self, val):
+        heapq.heappush(self.heap, val)
+        if len(self.heap) &gt; self.k:
+            heapq.heappop(self.heap)
+        return self.heap[0]</code></pre></div>
+    <p class="complexity">Time <strong>O(log k)</strong> per add · Space <strong>O(k)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Top K Frequent Elements</h3><span class="lc">LC 347</span></div>
+    <p class="statement">Given an array, return the k most frequent elements.</p>
+    <p><strong>Why this pattern —</strong> Count frequencies with a hash map, then push (frequency, value) pairs through a min-heap capped at size k — the heap always holds the k highest frequencies seen so far, discarding the smallest whenever a bigger one arrives.</p>
+    <div class="code-wrap"><pre><code>def topKFrequent(nums, k):
+    counts = collections.Counter(nums)
+    heap = []
+    for num, freq in counts.items():
+        heapq.heappush(heap, (freq, num))
+        if len(heap) &gt; k:
+            heapq.heappop(heap)
+    return [num for freq, num in heap]</code></pre></div>
+    <p class="complexity">Time <strong>O(n log k)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Merge k Sorted Lists</h3><span class="lc">LC 23</span></div>
+    <p class="statement">Merge k sorted linked lists into one sorted list.</p>
+    <p><strong>Why this pattern —</strong> Instead of merging pairwise, push each list's current head into a min-heap keyed by value. Repeatedly pop the smallest, append it to the result, and push its successor — the heap always exposes the global minimum across all k lists in O(log k), turning an O(nk) merge into O(n log k).</p>
+    <div class="code-wrap"><pre><code>def mergeKLists(lists):
+    heap = []
+    for i, node in enumerate(lists):
+        if node:
+            heapq.heappush(heap, (node.val, i, node))
+
+    dummy = tail = ListNode()
+    while heap:
+        val, i, node = heapq.heappop(heap)
+        tail.next = node
+        tail = tail.next
+        if node.next:
+            heapq.heappush(heap, (node.next.val, i, node.next))
+    return dummy.next</code></pre></div>
+    <p class="complexity">Time <strong>O(n log k)</strong> (n = total nodes) · Space <strong>O(k)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="two-heaps">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 15 / 28</span>
+    <h2>Two Heaps (Median Maintenance)</h2>
+    <span class="niche-flag">NICHE</span>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Split the data across two heaps — a max-heap holding the smaller half and a min-heap holding the larger half — kept balanced in size so the tops of both heaps sit exactly on either side of the median, letting the median be read in O(1) after every insertion.</p>
+    <p><strong>When to use it —</strong> Streaming median, and any running "balance point" statistic that would otherwise demand a full re-sort after each update.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>max-heap</code> + <code>min-heap</code> (used together)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Last Stone Weight</h3><span class="lc">LC 1046</span></div>
+    <p class="statement">Repeatedly smash the two heaviest stones together (the heavier survives at their weight difference, or both vanish if equal) until at most one stone remains; return its weight.</p>
+    <p><strong>Why this pattern —</strong> A single max-heap always exposes the two heaviest stones in O(log n). It's included here as the single-heap building block that the true two-heap median technique below extends into two coordinated heaps.</p>
+    <div class="code-wrap"><pre><code>def lastStoneWeight(stones):
+    heap = [-s for s in stones]
+    heapq.heapify(heap)
+    while len(heap) &gt; 1:
+        a = -heapq.heappop(heap)
+        b = -heapq.heappop(heap)
+        if a != b:
+            heapq.heappush(heap, -(a - b))
+    return -heap[0] if heap else 0</code></pre></div>
+    <p class="complexity">Time <strong>O(n log n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Kth Largest Element in an Array</h3><span class="lc">LC 215</span></div>
+    <p class="statement">Find the kth largest element in an unsorted array.</p>
+    <p><strong>Why this pattern —</strong> A size-k min-heap keeps exactly the k largest values seen so far, with the current kth largest always sitting at the root — the same size-bounded-heap discipline that, mirrored with a second heap on the other side, produces the two-heap median structure next.</p>
+    <div class="code-wrap"><pre><code>def findKthLargest(nums, k):
+    heap = nums[:k]
+    heapq.heapify(heap)
+    for n in nums[k:]:
+        if n &gt; heap[0]:
+            heapq.heapreplace(heap, n)
+    return heap[0]</code></pre></div>
+    <p class="complexity">Time <strong>O(n log k)</strong> · Space <strong>O(k)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Find Median from Data Stream</h3><span class="lc">LC 295</span></div>
+    <p class="statement">Design a structure that adds numbers one at a time and can return the median of all numbers seen so far at any point.</p>
+    <p><strong>Why this pattern —</strong> The canonical two-heap problem. A max-heap ("lo") holds the smaller half, a min-heap ("hi") holds the larger half, rebalanced after every insert so their sizes differ by at most one — the median is either the max-heap's top (odd total count) or the average of both tops (even count).</p>
+    <div class="code-wrap"><pre><code>class MedianFinder:
+    def __init__(self):
+        self.lo = []   # max-heap, values negated
+        self.hi = []   # min-heap
+
+    def addNum(self, num):
+        heapq.heappush(self.lo, -num)
+        heapq.heappush(self.hi, -heapq.heappop(self.lo))
+        if len(self.hi) &gt; len(self.lo):
+            heapq.heappush(self.lo, -heapq.heappop(self.hi))
+
+    def findMedian(self):
+        if len(self.lo) &gt; len(self.hi):
+            return -self.lo[0]
+        return (-self.lo[0] + self.hi[0]) / 2</code></pre></div>
+    <p class="complexity">Time <strong>O(log n)</strong> per insert, <strong>O(1)</strong> per query · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+<div class="section-divider" style="--dot:var(--c-backtrack)"><span class="dot"></span><h2 class="group-title">Backtracking</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="backtrack-subsets">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 16 / 28</span>
+    <h2>Backtracking: Subsets &amp; Combinations</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Build candidate solutions incrementally — at each step choosing to include or skip the next element — recursing forward and undoing ("backtracking") the choice on return, exploring the full decision tree while pruning branches that already violate a constraint.</p>
+    <p><strong>When to use it —</strong> Generating subsets, combinations, and combination-sum style problems — any "choose some elements" enumeration where the order among chosen elements doesn't matter.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array/list</code> (path being built)<code>call stack</code> (recursion)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Subsets</h3><span class="lc">LC 78 · foundational</span></div>
+    <p class="statement">Given a set of distinct integers, return all possible subsets (the power set).</p>
+    <p><strong>Why this pattern —</strong> At each recursive call, either include the current element in the running path or skip it, recursing on the remainder both ways — every leaf of that binary decision tree is one complete subset.</p>
+    <div class="code-wrap"><pre><code>def subsets(nums):
+    res = []
+    path = []
+    def backtrack(i):
+        if i == len(nums):
+            res.append(path[:])
+            return
+        path.append(nums[i])
+        backtrack(i + 1)
+        path.pop()
+        backtrack(i + 1)
+    backtrack(0)
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(2ⁿ)</strong> · Space <strong>O(n)</strong> recursion depth</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Combination Sum</h3><span class="lc">LC 39</span></div>
+    <p class="statement">Given distinct candidates and a target, return all unique combinations that sum to target (each candidate may be reused unlimited times).</p>
+    <p><strong>Why this pattern —</strong> At each step, choose whether to take the current candidate again (staying at the same index, since reuse is allowed) or move on to the next candidate, backtracking whenever the running sum overshoots the target — the same include/skip recursion with a reuse twist.</p>
+    <div class="code-wrap"><pre><code>def combinationSum(candidates, target):
+    res = []
+    path = []
+    def backtrack(start, remaining):
+        if remaining == 0:
+            res.append(path[:])
+            return
+        if remaining &lt; 0:
+            return
+        for i in range(start, len(candidates)):
+            path.append(candidates[i])
+            backtrack(i, remaining - candidates[i])
+            path.pop()
+    backtrack(0, target)
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(2^target)</strong> worst case · Space <strong>O(target)</strong> recursion depth</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Word Break II</h3><span class="lc">LC 140</span></div>
+    <p class="statement">Given a string and a dictionary of words, return all ways to insert spaces to break the string into a sequence of dictionary words.</p>
+    <p><strong>Why this pattern —</strong> At each starting index, try every dictionary word that matches from there, recurse on the remaining suffix, and join a valid suffix-decomposition back onto the current word before backtracking to try the next candidate word. Memoizing each suffix's full list of decompositions avoids recomputing shared work across overlapping recursive calls.</p>
+    <div class="code-wrap"><pre><code>def wordBreak(s, wordDict):
+    words = set(wordDict)
+    memo = {}
+    def backtrack(start):
+        if start == len(s):
+            return [""]
+        if start in memo:
+            return memo[start]
+        sentences = []
+        for end in range(start + 1, len(s) + 1):
+            word = s[start:end]
+            if word in words:
+                for rest in backtrack(end):
+                    sentences.append(word + ("" if rest == "" else " " + rest))
+        memo[start] = sentences
+        return sentences
+    return backtrack(0)</code></pre></div>
+    <p class="complexity">Time <strong>O(n²·2ⁿ)</strong> worst case (exponential output possible) · memoized over suffixes</p>
+  </div>
+</section>
+
+<section class="pattern" id="backtrack-perms">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 17 / 28</span>
+    <h2>Backtracking: Permutations &amp; Constraint Satisfaction</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Build candidate solutions by choosing one element or assignment per position, tracking which choices remain legal (used sets, row/column/diagonal conflicts), recursing to the next position and undoing the choice on return — used where order matters or global constraints must hold simultaneously.</p>
+    <p><strong>When to use it —</strong> Generating permutations, N-Queens style placement puzzles, Sudoku, and palindrome partitioning — anywhere each new choice must be checked against everything chosen so far before recursing deeper.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array/list</code> (path)<code>hash set / boolean array</code> (conflict tracking)<code>call stack</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Permutations</h3><span class="lc">LC 46 · foundational</span></div>
+    <p class="statement">Given a distinct-integer array, return all possible permutations.</p>
+    <p><strong>Why this pattern —</strong> At each position, try every not-yet-used number, mark it used, recurse to fill the next position, then unmark it (backtrack) before trying the next candidate — a direct "choose one per position" decision tree.</p>
+    <div class="code-wrap"><pre><code>def permute(nums):
+    res = []
+    path = []
+    used = [False] * len(nums)
+    def backtrack():
+        if len(path) == len(nums):
+            res.append(path[:])
+            return
+        for i in range(len(nums)):
+            if used[i]:
+                continue
+            used[i] = True
+            path.append(nums[i])
+            backtrack()
+            path.pop()
+            used[i] = False
+    backtrack()
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n!·n)</strong> · Space <strong>O(n)</strong> recursion depth</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Palindrome Partitioning</h3><span class="lc">LC 131</span></div>
+    <p class="statement">Partition a string so every substring in the partition is a palindrome; return all such partitions.</p>
+    <p><strong>Why this pattern —</strong> At each starting index, try every prefix of the remaining string that is itself a palindrome, add it to the path, recurse on what's left, then backtrack to try a different-length valid prefix — the "is this piece legal" check plays the same role N-Queens plays with row/column/diagonal checks.</p>
+    <div class="code-wrap"><pre><code>def partition(s):
+    res = []
+    path = []
+    def is_pal(sub):
+        return sub == sub[::-1]
+    def backtrack(start):
+        if start == len(s):
+            res.append(path[:])
+            return
+        for end in range(start + 1, len(s) + 1):
+            piece = s[start:end]
+            if is_pal(piece):
+                path.append(piece)
+                backtrack(end)
+                path.pop()
+    backtrack(0)
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n·2ⁿ)</strong> worst case · Space <strong>O(n)</strong> recursion depth</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>N-Queens</h3><span class="lc">LC 51</span></div>
+    <p class="statement">Place n queens on an n×n board so no two attack each other; return all distinct solutions.</p>
+    <p><strong>Why this pattern —</strong> Place one queen per row, tracking which columns and both diagonals are already under attack. At each row, try every column not currently in conflict, recurse to the next row, and backtrack the conflict markers before trying the next column — the textbook constraint-satisfaction backtracking problem.</p>
+    <div class="code-wrap"><pre><code>def solveNQueens(n):
+    res = []
+    cols, diag1, diag2 = set(), set(), set()   # diag1: r-c, diag2: r+c
+    board = [["."] * n for _ in range(n)]
+
+    def backtrack(r):
+        if r == n:
+            res.append(["".join(row) for row in board])
+            return
+        for c in range(n):
+            if c in cols or (r - c) in diag1 or (r + c) in diag2:
+                continue
+            cols.add(c); diag1.add(r - c); diag2.add(r + c)
+            board[r][c] = "Q"
+            backtrack(r + 1)
+            board[r][c] = "."
+            cols.discard(c); diag1.discard(r - c); diag2.discard(r + c)
+
+    backtrack(0)
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n!)</strong> worst case · Space <strong>O(n²)</strong> for board storage</p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-graphs)"><span class="dot"></span><h2 class="group-title">Graphs</h2><span class="line"></span><span class="count">3 patterns</span></div>
+
+<section class="pattern" id="graph-traversal">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 18 / 28</span>
+    <h2>Graph DFS / BFS Traversal</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Visit every reachable node from a starting point by exploring edges — DFS recurses (or uses an explicit stack) as deep as possible before backtracking; BFS expands outward one edge-layer at a time via a queue — marking visited nodes so a cyclic graph doesn't cause infinite reprocessing.</p>
+    <p><strong>When to use it —</strong> Connected-components counting, flood fill, shortest path in unweighted graphs (BFS), and reachability or longest-path-with-memoization questions (DFS).</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>graph (adjacency list / grid)</code><code>visited set</code><code>stack (DFS) / queue (BFS)</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Flood Fill</h3><span class="lc">LC 733</span></div>
+    <p class="statement">Given a starting pixel in a grid, change its color and every 4-directionally connected pixel that shares its original color.</p>
+    <p><strong>Why this pattern —</strong> DFS from the start pixel, recoloring the current pixel and recursing into same-colored neighbors — it naturally stops at pixels of a different color or ones already recolored, so no separate visited set is needed.</p>
+    <div class="code-wrap"><pre><code>def floodFill(image, sr, sc, color):
+    rows, cols = len(image), len(image[0])
+    start_color = image[sr][sc]
+    if start_color == color:
+        return image
+
+    def dfs(r, c):
+        if r &lt; 0 or r &gt;= rows or c &lt; 0 or c &gt;= cols or image[r][c] != start_color:
+            return
+        image[r][c] = color
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+
+    dfs(sr, sc)
+    return image</code></pre></div>
+    <p class="complexity">Time <strong>O(rows·cols)</strong> · Space <strong>O(rows·cols)</strong> recursion worst case</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Number of Islands</h3><span class="lc">LC 200</span></div>
+    <p class="statement">Given a grid of '1's (land) and '0's (water), count the number of islands (4-directionally connected land regions).</p>
+    <p><strong>Why this pattern —</strong> Scan every cell; on an unvisited land cell, DFS to sink the entire connected island (marking cells visited), incrementing the island count once per DFS launch — each traversal call consumes one whole connected component.</p>
+    <div class="code-wrap"><pre><code>def numIslands(grid):
+    rows, cols = len(grid), len(grid[0])
+
+    def dfs(r, c):
+        if r &lt; 0 or r &gt;= rows or c &lt; 0 or c &gt;= cols or grid[r][c] != '1':
+            return
+        grid[r][c] = '0'
+        dfs(r + 1, c); dfs(r - 1, c); dfs(r, c + 1); dfs(r, c - 1)
+
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == '1':
+                dfs(r, c)
+                count += 1
+    return count</code></pre></div>
+    <p class="complexity">Time <strong>O(rows·cols)</strong> · Space <strong>O(rows·cols)</strong> worst case</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Longest Increasing Path in a Matrix</h3><span class="lc">LC 329</span></div>
+    <p class="statement">Find the length of the longest strictly increasing path in a matrix, moving 4-directionally.</p>
+    <p><strong>Why this pattern —</strong> DFS from every cell following only strictly-increasing neighbors, memoizing each cell's best result. The "increasing" constraint guarantees no cycles, so the traversal is really a DAG longest-path computation — memoization turns exponential re-exploration into one visit per cell.</p>
+    <div class="code-wrap"><pre><code>def longestIncreasingPath(matrix):
+    rows, cols = len(matrix), len(matrix[0])
+    memo = {}
+
+    def dfs(r, c):
+        if (r, c) in memo:
+            return memo[(r, c)]
+        best = 1
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = r + dr, c + dc
+            if 0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols and matrix[nr][nc] &gt; matrix[r][c]:
+                best = max(best, 1 + dfs(nr, nc))
+        memo[(r, c)] = best
+        return best
+
+    return max(dfs(r, c) for r in range(rows) for c in range(cols))</code></pre></div>
+    <p class="complexity">Time <strong>O(rows·cols)</strong> (each cell computed once) · Space <strong>O(rows·cols)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="union-find">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 19 / 28</span>
+    <h2>Union-Find (Disjoint Set Union)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Maintain a forest of elements where each set has a representative "root". <code style="background:none;border:none;padding:0;color:var(--text)">find(x)</code> walks (and compresses) x's path up to its root; <code style="background:none;border:none;padding:0;color:var(--text)">union(x, y)</code> attaches one root under the other — near O(1) amortized per operation, answering "are these connected?" without a full graph traversal.</p>
+    <p><strong>When to use it —</strong> Dynamic connectivity queries, cycle detection in undirected graphs, counting connected components as edges stream in, and Kruskal's minimum-spanning-tree algorithm.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array</code> (parent pointers, rank/size)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Find if Path Exists in Graph</h3><span class="lc">LC 1971</span></div>
+    <p class="statement">Given the edges of an undirected graph, determine whether a path exists between a source and destination node.</p>
+    <p><strong>Why this pattern —</strong> Union every edge's two endpoints; source and destination have a path between them exactly when <code style="background:none;border:none;padding:0;color:var(--text)">find(source) == find(destination)</code> — connectivity without ever building or walking an explicit path.</p>
+    <div class="code-wrap"><pre><code>def validPath(n, edges, source, destination):
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(x, y):
+        rx, ry = find(x), find(y)
+        if rx != ry:
+            parent[rx] = ry
+
+    for a, b in edges:
+        union(a, b)
+    return find(source) == find(destination)</code></pre></div>
+    <p class="complexity">Time <strong>O((n + e)·α(n))</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Redundant Connection</h3><span class="lc">LC 684</span></div>
+    <p class="statement">Given a graph that was a tree with one extra edge added (creating exactly one cycle), find that extra edge.</p>
+    <p><strong>Why this pattern —</strong> Process edges in order, union-ing each pair's endpoints. The first edge whose two endpoints already share the same root is the one that closes a cycle — exactly the redundant edge, found in one linear pass instead of explicit cycle detection.</p>
+    <div class="code-wrap"><pre><code>def findRedundantConnection(edges):
+    n = len(edges)
+    parent = list(range(n + 1))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b in edges:
+        ra, rb = find(a), find(b)
+        if ra == rb:
+            return [a, b]
+        parent[ra] = rb
+    return []</code></pre></div>
+    <p class="complexity">Time <strong>O(n·α(n))</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Swim in Rising Water</h3><span class="lc">LC 778</span></div>
+    <p class="statement">Given an n×n grid of elevations, find the minimum time t such that a path exists from top-left to bottom-right using only cells with elevation ≤ t.</p>
+    <p><strong>Why this pattern —</strong> Sort all cells by elevation and union-find each cell with its already-processed neighbors as elevation "floods in" over time — the answer is the elevation value at which top-left and bottom-right first land in the same set.</p>
+    <div class="code-wrap"><pre><code>def swimInWater(grid):
+    n = len(grid)
+    parent = list(range(n * n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(x, y):
+        parent[find(x)] = find(y)
+
+    cells = sorted(range(n * n), key=lambda idx: grid[idx // n][idx % n])
+    seen = [[False] * n for _ in range(n)]
+    for idx in cells:
+        r, c = idx // n, idx % n
+        seen[r][c] = True
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nr, nc = r + dr, c + dc
+            if 0 &lt;= nr &lt; n and 0 &lt;= nc &lt; n and seen[nr][nc]:
+                union(r * n + c, nr * n + nc)
+        if find(0) == find(n * n - 1):
+            return grid[r][c]
+    return -1</code></pre></div>
+    <p class="complexity">Time <strong>O(n²·log n)</strong> (dominated by the sort) · Space <strong>O(n²)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="topo-sort">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 20 / 28</span>
+    <h2>Topological Sort</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Order the nodes of a directed acyclic graph so every edge u→v places u before v — computed by repeatedly removing nodes with in-degree zero (Kahn's / BFS-style) or by reversing a DFS post-order — detecting a cycle if not every node can be ordered.</p>
+    <p><strong>When to use it —</strong> Task or course scheduling with prerequisites, build-dependency ordering, and any "must happen before" constraint graph.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>graph (adjacency list)</code><code>in-degree array</code><code>queue</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Course Schedule</h3><span class="lc">LC 207 · foundational</span></div>
+    <p class="statement">Given numCourses and prerequisite pairs, determine whether it's possible to finish all courses — i.e. the prerequisite graph has no cycle.</p>
+    <p><strong>Why this pattern —</strong> Build in-degrees from the prerequisites, repeatedly dequeue courses with in-degree 0 (no unmet prerequisite), decrementing their neighbors' in-degrees. If every course eventually gets dequeued, no cycle exists; courses stuck at in-degree &gt; 0 mean a cycle is blocking them.</p>
+    <div class="code-wrap"><pre><code>def canFinish(numCourses, prerequisites):
+    graph = collections.defaultdict(list)
+    indegree = [0] * numCourses
+    for course, pre in prerequisites:
+        graph[pre].append(course)
+        indegree[course] += 1
+
+    queue = collections.deque(c for c in range(numCourses) if indegree[c] == 0)
+    visited = 0
+    while queue:
+        node = queue.popleft()
+        visited += 1
+        for nxt in graph[node]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+    return visited == numCourses</code></pre></div>
+    <p class="complexity">Time <strong>O(V + E)</strong> · Space <strong>O(V + E)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Course Schedule II</h3><span class="lc">LC 210</span></div>
+    <p class="statement">Return a valid course order to finish all courses, or an empty array if impossible.</p>
+    <p><strong>Why this pattern —</strong> The identical Kahn's algorithm, except the dequeue order is itself recorded — every node dequeued already has all its prerequisites output, so the dequeue sequence is a valid topological order by construction.</p>
+    <div class="code-wrap"><pre><code>def findOrder(numCourses, prerequisites):
+    graph = collections.defaultdict(list)
+    indegree = [0] * numCourses
+    for course, pre in prerequisites:
+        graph[pre].append(course)
+        indegree[course] += 1
+
+    queue = collections.deque(c for c in range(numCourses) if indegree[c] == 0)
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for nxt in graph[node]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+    return order if len(order) == numCourses else []</code></pre></div>
+    <p class="complexity">Time <strong>O(V + E)</strong> · Space <strong>O(V + E)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Alien Dictionary</h3><span class="lc">LC 269</span></div>
+    <p class="statement">Given a list of words sorted according to an unknown alien alphabet's rules, derive a valid ordering of that alphabet's letters.</p>
+    <p><strong>Why this pattern —</strong> Compare each pair of adjacent words to find their first differing letter — that pair gives one directed edge (earlier letter → later letter) in the alphabet's precedence graph. Topologically sort that graph to get a valid letter ordering, detecting invalid input (a cycle, or a word that's a prefix of an earlier word) along the way.</p>
+    <div class="code-wrap"><pre><code>def alienOrder(words):
+    graph = collections.defaultdict(set)
+    indegree = {ch: 0 for w in words for ch in w}
+
+    for w1, w2 in zip(words, words[1:]):
+        min_len = min(len(w1), len(w2))
+        if w1[:min_len] == w2[:min_len] and len(w1) &gt; len(w2):
+            return ""
+        for c1, c2 in zip(w1, w2):
+            if c1 != c2:
+                if c2 not in graph[c1]:
+                    graph[c1].add(c2)
+                    indegree[c2] += 1
+                break
+
+    queue = collections.deque(c for c in indegree if indegree[c] == 0)
+    order = []
+    while queue:
+        c = queue.popleft()
+        order.append(c)
+        for nxt in graph[c]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+    return "".join(order) if len(order) == len(indegree) else ""</code></pre></div>
+    <p class="complexity">Time <strong>O(total characters)</strong> · Space <strong>O(alphabet + edges)</strong></p>
+  </div>
+</section>
+<div class="section-divider" style="--dot:var(--c-advgraphs)"><span class="dot"></span><h2 class="group-title">Advanced Graphs</h2><span class="line"></span><span class="count">2 patterns</span></div>
+
+<section class="pattern" id="dijkstra">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 21 / 28</span>
+    <h2>Dijkstra's Shortest Path</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Find shortest paths from a source in a weighted graph with non-negative edges by repeatedly extracting the currently-closest unvisited node from a min-heap and relaxing its neighbors' distances — greedy, because once a node is popped its shortest distance is finalized and never improves again.</p>
+    <p><strong>When to use it —</strong> Shortest-path or cheapest-cost problems on weighted graphs — network delay, flight cost with stops, grid paths with variable move cost — anywhere BFS's "one edge = one step" assumption breaks because edges carry different weights.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>weighted graph (adjacency list)</code><code>min-heap</code><code>distance map</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Network Delay Time</h3><span class="lc">LC 743 · foundational</span></div>
+    <p class="statement">Given a network of n nodes and weighted directed edges, find the time for a signal sent from node k to reach all nodes, or −1 if impossible.</p>
+    <p><strong>Why this pattern —</strong> Dijkstra in its purest form: push (0, k) onto a min-heap, repeatedly pop the closest unvisited node, relax its outgoing edges, and track the maximum finalized distance — the time the last node receives the signal.</p>
+    <div class="code-wrap"><pre><code>def networkDelayTime(times, n, k):
+    graph = collections.defaultdict(list)
+    for u, v, w in times:
+        graph[u].append((v, w))
+
+    dist = {}
+    heap = [(0, k)]
+    while heap:
+        d, node = heapq.heappop(heap)
+        if node in dist:
+            continue
+        dist[node] = d
+        for nei, w in graph[node]:
+            if nei not in dist:
+                heapq.heappush(heap, (d + w, nei))
+    return max(dist.values()) if len(dist) == n else -1</code></pre></div>
+    <p class="complexity">Time <strong>O(E log V)</strong> · Space <strong>O(V + E)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Cheapest Flights Within K Stops</h3><span class="lc">LC 787</span></div>
+    <p class="statement">Find the cheapest price from src to dst using at most K stops (K+1 edges).</p>
+    <p><strong>Why this pattern —</strong> Plain Dijkstra optimizes globally-shortest distance and could discard a cheaper-but-more-hops path too early, so the heap here carries (cost, node, stops_used) — a node may legally be revisited with more stops remaining if that unlocks a cheaper eventual route. The priority queue still expands the cheapest frontier first, just with one extra state dimension.</p>
+    <div class="code-wrap"><pre><code>def findCheapestPrice(n, flights, src, dst, K):
+    graph = collections.defaultdict(list)
+    for u, v, w in flights:
+        graph[u].append((v, w))
+
+    heap = [(0, src, 0)]
+    while heap:
+        cost, node, stops = heapq.heappop(heap)
+        if node == dst:
+            return cost
+        if stops &lt;= K:
+            for nei, w in graph[node]:
+                heapq.heappush(heap, (cost + w, nei, stops + 1))
+    return -1</code></pre></div>
+    <p class="complexity">Time <strong>O(E·K·log(E·K))</strong> · Space <strong>O(V + E)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Minimum Cost to Make at Least One Valid Path in a Grid</h3><span class="lc">LC 1368</span></div>
+    <p class="statement">Each grid cell has a direction sign; following the sign is free, but redirecting a cell's sign costs 1. Find the minimum cost to travel from top-left to bottom-right.</p>
+    <p><strong>Why this pattern —</strong> Model the grid as a graph where following the existing sign costs 0 and any other direction costs 1, then run Dijkstra with a min-heap on this 0/1-weighted graph — cells reachable "for free" get finalized before any cost is spent, making this Dijkstra specialized to the common 0-1 weighted case.</p>
+    <div class="code-wrap"><pre><code>def minCost(grid):
+    rows, cols = len(grid), len(grid[0])
+    DIRS = {1: (0, 1), 2: (0, -1), 3: (1, 0), 4: (-1, 0)}
+    dist = [[float('inf')] * cols for _ in range(rows)]
+    dist[0][0] = 0
+    heap = [(0, 0, 0)]
+    while heap:
+        d, r, c = heapq.heappop(heap)
+        if d &gt; dist[r][c]:
+            continue
+        if r == rows - 1 and c == cols - 1:
+            return d
+        for sign, (dr, dc) in DIRS.items():
+            nr, nc = r + dr, c + dc
+            if 0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols:
+                cost = 0 if grid[r][c] == sign else 1
+                nd = d + cost
+                if nd &lt; dist[nr][nc]:
+                    dist[nr][nc] = nd
+                    heapq.heappush(heap, (nd, nr, nc))
+    return dist[rows-1][cols-1]</code></pre></div>
+    <p class="complexity">Time <strong>O(rows·cols·log(rows·cols))</strong> · Space <strong>O(rows·cols)</strong></p>
+  </div>
+</section>
+
+<section class="pattern" id="mst">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 22 / 28</span>
+    <h2>Minimum Spanning Tree (Prim's / Kruskal's)</h2>
+    <span class="niche-flag">NICHE</span>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Find the subset of edges connecting all nodes in a weighted undirected graph with minimum total weight and no cycles. Kruskal's sorts all edges and greedily adds each one via Union-Find as long as it doesn't create a cycle; Prim's grows one connected tree outward, always adding the cheapest edge leaving the current tree via a min-heap.</p>
+    <p><strong>When to use it —</strong> Network-design questions — minimum cost to connect all cities, computers, or points — and any "connect everything as cheaply as possible" problem.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>union-find</code> (Kruskal's)<code>min-heap + visited set</code> (Prim's)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Min Cost to Connect All Points</h3><span class="lc">LC 1584 · foundational</span></div>
+    <p class="statement">Given points on a plane, connect all of them using edges weighted by Manhattan distance, minimizing total edge weight.</p>
+    <p><strong>Why this pattern —</strong> MST on a complete graph, where every pair of points is a potential edge. Prim's grows a tree from one point, at each step adding the cheapest edge to an unvisited point via a min-heap — the direct approach that regenerates candidate edges from the newly-added point each round.</p>
+    <div class="code-wrap"><pre><code>def minCostConnectPoints(points):
+    n = len(points)
+    visited = [False] * n
+    heap = [(0, 0)]
+    total = 0
+    edges_used = 0
+    while edges_used &lt; n:
+        cost, u = heapq.heappop(heap)
+        if visited[u]:
+            continue
+        visited[u] = True
+        total += cost
+        edges_used += 1
+        for v in range(n):
+            if not visited[v]:
+                dist = abs(points[u][0]-points[v][0]) + abs(points[u][1]-points[v][1])
+                heapq.heappush(heap, (dist, v))
+    return total</code></pre></div>
+    <p class="complexity">Time <strong>O(n²log n)</strong> · Space <strong>O(n²)</strong> heap entries worst case</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Connecting Cities With Minimum Cost</h3><span class="lc">LC 1135</span></div>
+    <p class="statement">Given cities and a list of weighted connections, find the minimum cost to connect all cities, or −1 if impossible.</p>
+    <p><strong>Why this pattern —</strong> The Kruskal's approach: sort all given edges by weight, then greedily union each edge's endpoints via Union-Find, adding its weight to the total whenever it connects two previously-separate components; skip any edge that would create a cycle.</p>
+    <div class="code-wrap"><pre><code>def minimumCost(n, connections):
+    parent = list(range(n + 1))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    connections.sort(key=lambda e: e[2])
+    total, edges_used = 0, 0
+    for u, v, w in connections:
+        ru, rv = find(u), find(v)
+        if ru != rv:
+            parent[ru] = rv
+            total += w
+            edges_used += 1
+    return total if edges_used == n - 1 else -1</code></pre></div>
+    <p class="complexity">Time <strong>O(E log E)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Optimize Water Distribution in a Village</h3><span class="lc">LC 1168</span></div>
+    <p class="statement">Each house can get a well built directly (given per-house cost) or be connected to another house via a pipe (given pairwise cost); find the minimum total cost to supply every house with water.</p>
+    <p><strong>Why this pattern —</strong> Introduce a virtual node 0 representing "the well source," add an edge from node 0 to every house weighted by that house's well cost, then run standard Kruskal's MST — sorting well-edges and pipe-edges together — on the resulting graph. A clean reduction that turns "build or connect" into a single MST problem.</p>
+    <div class="code-wrap"><pre><code>def minCostToSupplyWater(n, wells, pipes):
+    edges = [(cost, 0, i + 1) for i, cost in enumerate(wells)]
+    edges += [(cost, u, v) for u, v, cost in pipes]
+    edges.sort()
+
+    parent = list(range(n + 1))
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    total, edges_used = 0, 0
+    for cost, u, v in edges:
+        ru, rv = find(u), find(v)
+        if ru != rv:
+            parent[ru] = rv
+            total += cost
+            edges_used += 1
+            if edges_used == n:
+                break
+    return total</code></pre></div>
+    <p class="complexity">Time <strong>O(E log E)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-dp1d)"><span class="dot"></span><h2 class="group-title">1-D Dynamic Programming</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="dp-1d">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 23 / 28</span>
+    <h2>1-D Dynamic Programming</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Express the answer for size n in terms of answers for smaller sizes — <code style="background:none;border:none;padding:0;color:var(--text)">dp[i]</code> built from <code style="background:none;border:none;padding:0;color:var(--text)">dp[i-1], dp[i-2], …</code> — computed bottom-up (or top-down with memoization) so each subproblem is solved once instead of exponentially many times through naive recursion.</p>
+    <p><strong>When to use it —</strong> Counting or optimizing over sequences with a single "position" dimension — climbing stairs, house robber, coin change, longest increasing subsequence — anywhere a brute-force recursion would revisit the same prefix or suffix repeatedly.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>1-D array</code> (dp table), often compressible to rolling scalars</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Climbing Stairs</h3><span class="lc">LC 70</span></div>
+    <p class="statement">You can climb 1 or 2 steps at a time; count the distinct ways to reach step n.</p>
+    <p><strong>Why this pattern —</strong> The number of ways to reach step i is the sum of the ways to reach step i−1 (then take one step) and step i−2 (then take two) — the Fibonacci recurrence, computed bottom-up with two rolling variables.</p>
+    <div class="code-wrap"><pre><code>def climbStairs(n):
+    if n &lt;= 2:
+        return n
+    prev2, prev1 = 1, 2
+    for _ in range(3, n + 1):
+        prev2, prev1 = prev1, prev1 + prev2
+    return prev1</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Coin Change</h3><span class="lc">LC 322</span></div>
+    <p class="statement">Given coin denominations and a target amount, find the fewest coins needed to make that amount, or −1 if impossible.</p>
+    <p><strong>Why this pattern —</strong> <code style="background:none;border:none;padding:0;color:var(--text)">dp[a]</code> = fewest coins to make amount a, built from <code style="background:none;border:none;padding:0;color:var(--text)">dp[a - coin] + 1</code> across every denomination — each amount's answer depends only on smaller amounts already computed.</p>
+    <div class="code-wrap"><pre><code>def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for a in range(1, amount + 1):
+        for coin in coins:
+            if coin &lt;= a:
+                dp[a] = min(dp[a], dp[a - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1</code></pre></div>
+    <p class="complexity">Time <strong>O(amount·len(coins))</strong> · Space <strong>O(amount)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Palindrome Partitioning II</h3><span class="lc">LC 132</span></div>
+    <p class="statement">Given a string, find the minimum number of cuts needed so every resulting substring is a palindrome.</p>
+    <p><strong>Why this pattern —</strong> Precompute <code style="background:none;border:none;padding:0;color:var(--text)">is_pal[i][j]</code> for every substring with a 2-D pass, then run a 1-D DP where <code style="background:none;border:none;padding:0;color:var(--text)">cuts[i]</code> = fewest cuts for the prefix s[0:i], trying every earlier index as the start of the final palindromic piece — the 1-D recurrence rides on top of the precomputed palindrome table.</p>
+    <div class="code-wrap"><pre><code>def minCut(s):
+    n = len(s)
+    is_pal = [[False] * n for _ in range(n)]
+    for end in range(n):
+        for start in range(end + 1):
+            if s[start] == s[end] and (end - start &lt;= 2 or is_pal[start+1][end-1]):
+                is_pal[start][end] = True
+
+    cuts = [0] * n
+    for i in range(n):
+        if is_pal[0][i]:
+            cuts[i] = 0
+            continue
+        best = i
+        for j in range(1, i + 1):
+            if is_pal[j][i]:
+                best = min(best, cuts[j-1] + 1)
+        cuts[i] = best
+    return cuts[n-1]</code></pre></div>
+    <p class="complexity">Time <strong>O(n²)</strong> · Space <strong>O(n²)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-dp2d)"><span class="dot"></span><h2 class="group-title">2-D Dynamic Programming</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="dp-2d">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 24 / 28</span>
+    <h2>2-D Dynamic Programming (Grid / LCS)</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Express the answer for a pair of indices (i, j) in terms of answers at neighboring pairs — (i−1,j), (i,j−1), (i−1,j−1) — building a 2-D table bottom-up so two-sequence or grid-position subproblems are each solved once.</p>
+    <p><strong>When to use it —</strong> Grid path counting/optimization, longest-common-subsequence style two-string comparisons, and edit-distance style string transformation costs.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>2-D array</code> (dp table), often compressible to two rolling 1-D rows</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Unique Paths</h3><span class="lc">LC 62 · foundational</span></div>
+    <p class="statement">Count the distinct paths from top-left to bottom-right of an m×n grid, moving only right or down.</p>
+    <p><strong>Why this pattern —</strong> The number of ways to reach cell (i, j) is the sum of the ways to reach the cell above and the cell to the left: <code style="background:none;border:none;padding:0;color:var(--text)">dp[i][j] = dp[i-1][j] + dp[i][j-1]</code>, with the first row and column seeded at 1.</p>
+    <div class="code-wrap"><pre><code>def uniquePaths(m, n):
+    dp = [[1] * n for _ in range(m)]
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i-1][j] + dp[i][j-1]
+    return dp[m-1][n-1]</code></pre></div>
+    <p class="complexity">Time <strong>O(m·n)</strong> · Space <strong>O(m·n)</strong> (compressible to O(n))</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Longest Common Subsequence</h3><span class="lc">LC 1143</span></div>
+    <p class="statement">Given two strings, find the length of their longest common subsequence.</p>
+    <p><strong>Why this pattern —</strong> <code style="background:none;border:none;padding:0;color:var(--text)">dp[i][j]</code> = LCS length using the first i characters of text1 and first j of text2. Matching characters extend the diagonal's best by 1; otherwise take the best of dropping one character from either string — the classic two-sequence 2-D recurrence.</p>
+    <div class="code-wrap"><pre><code>def longestCommonSubsequence(text1, text2):
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if text1[i-1] == text2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[m][n]</code></pre></div>
+    <p class="complexity">Time <strong>O(m·n)</strong> · Space <strong>O(m·n)</strong> (compressible to O(min(m,n)))</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Edit Distance</h3><span class="lc">LC 72</span></div>
+    <p class="statement">Given two strings, find the minimum number of insertions, deletions, or substitutions to convert one into the other.</p>
+    <p><strong>Why this pattern —</strong> <code style="background:none;border:none;padding:0;color:var(--text)">dp[i][j]</code> = edit distance between the first i characters of word1 and first j of word2. Matching characters carry the diagonal value forward for free; otherwise the answer is 1 + the best of the three neighboring subproblems (insert, delete, substitute) — the same 2-D grid recurrence as LCS, with a three-way minimum instead of a match/skip choice.</p>
+    <div class="code-wrap"><pre><code>def minDistance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = 1 + min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1])
+    return dp[m][n]</code></pre></div>
+    <p class="complexity">Time <strong>O(m·n)</strong> · Space <strong>O(m·n)</strong> (compressible to O(min(m,n)))</p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-greedy)"><span class="dot"></span><h2 class="group-title">Greedy</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="greedy">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 25 / 28</span>
+    <h2>Greedy Choice</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> At each step, make the choice that looks locally best under some rule, trusting (or proving) that a sequence of locally-best choices assembles into a globally optimal solution — no backtracking or re-examining earlier choices.</p>
+    <p><strong>When to use it —</strong> Interval scheduling, resource allocation with a clear "always pick earliest/cheapest/most-urgent" rule, and problems where sorting by the right key exposes an obviously-safe first move.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array</code> (often sorted first), sometimes a running counter or heap</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Lemonade Change</h3><span class="lc">LC 860</span></div>
+    <p class="statement">Customers pay with $5, $10, or $20 bills for a $5 lemonade; determine if correct change can be given to every customer in order.</p>
+    <p><strong>Why this pattern —</strong> On a $20 payment, greedily break a $10+$5 instead of three $5s when possible — saving $5 bills for smaller-bill customers is always at least as good, since a $5 bill is more flexible change than a $10, so the locally-safer choice never hurts later.</p>
+    <div class="code-wrap"><pre><code>def lemonadeChange(bills):
+    five = ten = 0
+    for bill in bills:
+        if bill == 5:
+            five += 1
+        elif bill == 10:
+            if five == 0:
+                return False
+            five -= 1
+            ten += 1
+        else:
+            if ten &gt; 0 and five &gt; 0:
+                ten -= 1
+                five -= 1
+            elif five &gt;= 3:
+                five -= 3
+            else:
+                return False
+    return True</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Gas Station</h3><span class="lc">LC 134</span></div>
+    <p class="statement">Given gas and cost arrays around a circular route, find the starting station from which a car can complete the full circuit, or −1 if impossible.</p>
+    <p><strong>Why this pattern —</strong> If total gas is at least total cost, a valid start is guaranteed to exist. Greedily, whenever the running tank total drops below zero starting from a candidate, every station up to that failure point can be eliminated at once — none of them could have worked either — so the next station becomes the new candidate.</p>
+    <div class="code-wrap"><pre><code>def canCompleteCircuit(gas, cost):
+    if sum(gas) &lt; sum(cost):
+        return -1
+    total = 0
+    start = 0
+    for i in range(len(gas)):
+        total += gas[i] - cost[i]
+        if total &lt; 0:
+            start = i + 1
+            total = 0
+    return start</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Candy</h3><span class="lc">LC 135</span></div>
+    <p class="statement">Children stand in a line, each with a rating; give at least 1 candy to each, and any child rated higher than an immediate neighbor must get more candy than that neighbor. Minimize total candy.</p>
+    <p><strong>Why this pattern —</strong> Two greedy passes: left-to-right ensures every child beats their left neighbor's candy count whenever rated higher; right-to-left does the same against the right neighbor. Taking the max of both passes per child works because both constraints must hold simultaneously, and each single pass only enforces one direction safely.</p>
+    <div class="code-wrap"><pre><code>def candy(ratings):
+    n = len(ratings)
+    candies = [1] * n
+    for i in range(1, n):
+        if ratings[i] &gt; ratings[i-1]:
+            candies[i] = candies[i-1] + 1
+    for i in range(n - 2, -1, -1):
+        if ratings[i] &gt; ratings[i+1]:
+            candies[i] = max(candies[i], candies[i+1] + 1)
+    return sum(candies)</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+<div class="section-divider" style="--dot:var(--c-intervals)"><span class="dot"></span><h2 class="group-title">Intervals</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="intervals">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 26 / 28</span>
+    <h2>Merge Intervals</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Sort intervals by start time, then sweep left to right, merging any interval that overlaps the current merged interval (its start ≤ the current merged end) by extending the end — turns pairwise overlap checking into a single linear sweep after one sort.</p>
+    <p><strong>When to use it —</strong> Merging overlapping meeting times or ranges, inserting a new interval into a sorted set, and scheduling or room-allocation questions.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array (sorted by start)</code><code>heap</code> (for "currently active" interval ends, in sweep variants)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Summary Ranges</h3><span class="lc">LC 228</span></div>
+    <p class="statement">Given a sorted, unique array of integers, return the smallest sorted list of ranges that exactly covers every number.</p>
+    <p><strong>Why this pattern —</strong> Walk the sorted array extending the current range as long as the next number is exactly one more than the last — i.e. "adjacent" — closing the range and starting a new one the moment a gap appears. The same sweep-and-extend logic as interval merging, applied to implicit unit-width intervals.</p>
+    <div class="code-wrap"><pre><code>def summaryRanges(nums):
+    if not nums:
+        return []
+    res = []
+    start = nums[0]
+    for i in range(1, len(nums) + 1):
+        if i == len(nums) or nums[i] != nums[i-1] + 1:
+            end = nums[i-1]
+            res.append(str(start) if start == end else f"{start}-&gt;{end}")
+            if i &lt; len(nums):
+                start = nums[i]
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong> extra (excluding output)</p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Merge Intervals</h3><span class="lc">LC 56</span></div>
+    <p class="statement">Given a collection of intervals, merge all overlapping intervals.</p>
+    <p><strong>Why this pattern —</strong> Sort by start time, then sweep through: whenever the next interval's start is ≤ the current merged interval's end, they overlap — extend the current merged end to the max of both; otherwise close the current merged interval and open a new one.</p>
+    <div class="code-wrap"><pre><code>def merge(intervals):
+    intervals.sort(key=lambda iv: iv[0])
+    merged = [intervals[0]]
+    for start, end in intervals[1:]:
+        if start &lt;= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged</code></pre></div>
+    <p class="complexity">Time <strong>O(n log n)</strong> (sort dominates) · Space <strong>O(n)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Minimum Interval to Include Each Query</h3><span class="lc">LC 1851</span></div>
+    <p class="statement">Given a list of intervals and a list of query points, for each query find the size of the smallest interval containing it, or −1 if none does.</p>
+    <p><strong>Why this pattern —</strong> Sort both intervals and queries. Sweep queries in increasing order, pushing every interval whose start has come into play onto a min-heap keyed by interval size, and lazily popping intervals whose end has already passed the current query. The heap's top is always the smallest still-valid interval — the interval-sweep idea combined with a heap for "smallest that still covers me."</p>
+    <div class="code-wrap"><pre><code>def minInterval(intervals, queries):
+    intervals.sort()
+    sorted_queries = sorted(range(len(queries)), key=lambda i: queries[i])
+    heap = []
+    res = [-1] * len(queries)
+    i = 0
+    for q_idx in sorted_queries:
+        q = queries[q_idx]
+        while i &lt; len(intervals) and intervals[i][0] &lt;= q:
+            start, end = intervals[i]
+            heapq.heappush(heap, (end - start + 1, end))
+            i += 1
+        while heap and heap[0][1] &lt; q:
+            heapq.heappop(heap)
+        if heap:
+            res[q_idx] = heap[0][0]
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O((n + m) log(n + m))</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-bits)"><span class="dot"></span><h2 class="group-title">Bit Manipulation</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="bit-manip">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 27 / 28</span>
+    <h2>Bit Manipulation</h2>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Operate directly on a number's binary representation with AND, OR, XOR, NOT, and shifts to extract, set, clear, or toggle individual bits — exploiting identities like "XOR cancels duplicate pairs" or "AND with (n−1) clears the lowest set bit" to solve problems in O(1) or O(bit-width) instead of allocating extra structures.</p>
+    <p><strong>When to use it —</strong> Finding a single non-duplicate among duplicates, counting set bits, detecting powers of two, and combinatorial problems where a bitmask compactly represents a subset.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>integer</code> (as a bit array), sometimes a <code>bitwise trie</code></p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Single Number</h3><span class="lc">LC 136</span></div>
+    <p class="statement">Given an array where every element appears twice except one, find that single element.</p>
+    <p><strong>Why this pattern —</strong> XOR-ing every number together cancels every pair to 0 (x⊕x=0) and leaves only the unpaired value, since XOR is commutative, associative, and self-cancelling — no hash set required.</p>
+    <div class="code-wrap"><pre><code>def singleNumber(nums):
+    result = 0
+    for n in nums:
+        result ^= n
+    return result</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Single Number II</h3><span class="lc">LC 137</span></div>
+    <p class="statement">Given an array where every element appears three times except one, find that single element.</p>
+    <p><strong>Why this pattern —</strong> Track each bit position's count modulo 3 across all numbers using two accumulator variables that cycle bit-states 0→1→2→0 as each number folds in — a bit survives in the final result only if its true count mod 3 is 1, exactly the position the singleton holds.</p>
+    <div class="code-wrap"><pre><code>def singleNumber(nums):
+    ones, twos = 0, 0
+    for n in nums:
+        ones = (ones ^ n) & ~twos
+        twos = (twos ^ n) & ~ones
+    return ones</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Maximum XOR of Two Numbers in an Array</h3><span class="lc">LC 421 · hard-tier pick</span></div>
+    <p class="statement">Given an array of integers, find the maximum XOR of any two numbers in the array.</p>
+    <p><strong>Why this pattern —</strong> Build a binary trie of every number's bits, most-significant-bit first. For each number, greedily walk the trie trying the opposite-bit branch at every level — safe because a higher bit always contributes more to the XOR result than every lower bit combined — a direct bitwise application of the trie pattern.</p>
+    <div class="code-wrap"><pre><code>def findMaximumXOR(nums):
+    root = {}
+    for n in nums:
+        node = root
+        for i in range(31, -1, -1):
+            bit = (n &gt;&gt; i) & 1
+            node = node.setdefault(bit, {})
+
+    best = 0
+    for n in nums:
+        node = root
+        curr_xor = 0
+        for i in range(31, -1, -1):
+            bit = (n &gt;&gt; i) & 1
+            toggled = 1 - bit
+            if toggled in node:
+                curr_xor |= (1 &lt;&lt; i)
+                node = node[toggled]
+            else:
+                node = node[bit]
+        best = max(best, curr_xor)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(32n)</strong> · Space <strong>O(32n)</strong></p>
+  </div>
+</section>
+
+<div class="section-divider" style="--dot:var(--c-math)"><span class="dot"></span><h2 class="group-title">Math &amp; Geometry</h2><span class="line"></span><span class="count">1 pattern</span></div>
+
+<section class="pattern" id="cyclic-sort">
+  <div class="pattern-head">
+    <span class="pattern-idx">PATTERN 28 / 28</span>
+    <h2>Cyclic Sort &amp; Matrix Traversal</h2>
+    <span class="niche-flag">NICHE</span>
+  </div>
+  <div class="meta-row">
+    <p><strong>Definition —</strong> Cyclic Sort places each value directly at its "correct" index (value v belongs at index v−1) via swaps in one pass whenever values are known to lie in a bounded range, exposing missing or duplicate values without extra memory. Matrix Traversal patterns (spiral, layer-by-layer, transpose+reverse) systematically visit or rearrange grid cells using boundary pointers or direction vectors.</p>
+    <p><strong>When to use it —</strong> Finding missing/duplicate numbers in a bounded-range array, and printing or rotating a matrix in a specific geometric order.</p>
+    <p class="ds-list"><strong>Core data structures —</strong> <code>array</code> (in-place index manipulation)<code>boundary pointers</code> (top/bottom/left/right)</p>
+  </div>
+
+  <div class="problem easy">
+    <div class="problem-head"><span class="badge badge-easy">EASY</span><h3>Missing Number</h3><span class="lc">LC 268</span></div>
+    <p class="statement">Given an array containing n distinct numbers from the range [0, n], find the one missing number.</p>
+    <p><strong>Why this pattern —</strong> The cyclic-sort idea in its simplest form: instead of physically swapping each value to its index, compare the expected sum of [0, n] against the actual sum — the gap is the missing number. A full swap-based cyclic sort (placing each value v at index v) solves it too; this is the cleanest realization of "a known bounded range means no extra structure is needed."</p>
+    <div class="code-wrap"><pre><code>def missingNumber(nums):
+    n = len(nums)
+    expected = n * (n + 1) // 2
+    return expected - sum(nums)</code></pre></div>
+    <p class="complexity">Time <strong>O(n)</strong> · Space <strong>O(1)</strong></p>
+  </div>
+
+  <div class="problem medium">
+    <div class="problem-head"><span class="badge badge-medium">MEDIUM</span><h3>Spiral Matrix</h3><span class="lc">LC 54</span></div>
+    <p class="statement">Given an m×n matrix, return all its elements in spiral order.</p>
+    <p><strong>Why this pattern —</strong> Maintain four boundary pointers — top, bottom, left, right. Traverse the top row left-to-right, the right column top-to-bottom, the bottom row right-to-left, and the left column bottom-to-top, shrinking each boundary inward after its pass — a direct layer-by-layer geometric traversal.</p>
+    <div class="code-wrap"><pre><code>def spiralOrder(matrix):
+    res = []
+    top, bottom = 0, len(matrix) - 1
+    left, right = 0, len(matrix[0]) - 1
+    while top &lt;= bottom and left &lt;= right:
+        for c in range(left, right + 1):
+            res.append(matrix[top][c])
+        top += 1
+        for r in range(top, bottom + 1):
+            res.append(matrix[r][right])
+        right -= 1
+        if top &lt;= bottom:
+            for c in range(right, left - 1, -1):
+                res.append(matrix[bottom][c])
+            bottom -= 1
+        if left &lt;= right:
+            for r in range(bottom, top - 1, -1):
+                res.append(matrix[r][left])
+            left += 1
+    return res</code></pre></div>
+    <p class="complexity">Time <strong>O(m·n)</strong> · Space <strong>O(1)</strong> extra (excluding output)</p>
+  </div>
+
+  <div class="problem hard">
+    <div class="problem-head"><span class="badge badge-hard">HARD</span><h3>Max Points on a Line</h3><span class="lc">LC 149</span></div>
+    <p class="statement">Given points on a 2-D plane, find the maximum number of points that lie on the same straight line.</p>
+    <p><strong>Why this pattern —</strong> A geometry problem solved combinatorially: for every point, compute the slope to every other point as a reduced-fraction key (avoiding floating-point error) and hash points by shared slope. The largest bucket for any anchor point is the most collinear points passing through it — take the max across all anchors.</p>
+    <div class="code-wrap"><pre><code>def maxPoints(points):
+    n = len(points)
+    if n &lt;= 2:
+        return n
+    best = 1
+    for i in range(n):
+        slopes = collections.defaultdict(int)
+        for j in range(n):
+            if i == j:
+                continue
+            dx = points[j][0] - points[i][0]
+            dy = points[j][1] - points[i][1]
+            if dx == 0:
+                key = ('inf',)
+            else:
+                g = math.gcd(dx, dy)
+                dx, dy = dx // g, dy // g
+                if dx &lt; 0:
+                    dx, dy = -dx, -dy
+                key = (dx, dy)
+            slopes[key] += 1
+            best = max(best, slopes[key] + 1)
+    return best</code></pre></div>
+    <p class="complexity">Time <strong>O(n²)</strong> · Space <strong>O(n)</strong></p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div>field-guide.dsa — 28 patterns · 84 problems · built for pattern recognition, not memorization.</div>
+  <div style="margin-top:6px;">Code favors clarity over micro-optimization. Verify edge cases (empty input, single element) before using any snippet in an interview.</div>
+</footer>
+
+</main>
+</div>
+
+<script>
+// active section highlighting in sidebar
+(function(){
+  var sections = document.querySelectorAll('.pattern');
+  var navLinks = document.querySelectorAll('.nav-link');
+  var linkMap = {};
+  navLinks.forEach(function(link){
+    linkMap[link.getAttribute('href').slice(1)] = link;
+  });
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var link = linkMap[entry.target.id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach(function(l){ l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+    sections.forEach(function(sec){ observer.observe(sec); });
+  }
+})();
+
+// copy-to-clipboard buttons on every code block
+(function(){
+  document.querySelectorAll('.code-wrap').forEach(function(wrap){
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'copy';
+    btn.addEventListener('click', function(){
+      var codeEl = wrap.querySelector('code');
+      var text = codeEl ? codeEl.innerText : '';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function(){
+          btn.textContent = 'copied';
+          setTimeout(function(){ btn.textContent = 'copy'; }, 1200);
+        });
+      }
+    });
+    wrap.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>
